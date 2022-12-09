@@ -1,23 +1,15 @@
 import { useState } from "react";
 import { useHistory } from "react-router";
 import styled from "styled-components";
-import ReactMarkdown from "react-markdown";
-import { Button, Error, FormField, Input, Label, Textarea } from "../styles";
+import { Button, Error, FormField, Input, Label } from "../styles";
 
 function NewRecipe({ user }) {
-  const [title, setTitle] = useState("My Awesome Recipe");
-  const [minutesToComplete, setMinutesToComplete] = useState("30");
-  const [instructions, setInstructions] = useState(`Here's how you make it.
-  
-## Ingredients
+  const [destination, setDestination] = useState("");
+  const [departure, setDeparture] = useState("");
+  const [flightDate, setFlightDate] = useState("");
+  const [returnDate, setReturnDate] = useState("");
 
-- 1c Sugar
-- 1c Spice
 
-## Instructions
-
-**Mix** sugar and spice. _Bake_ for 30 minutes.
-  `);
   const [errors, setErrors] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const history = useHistory();
@@ -25,15 +17,17 @@ function NewRecipe({ user }) {
   function handleSubmit(e) {
     e.preventDefault();
     setIsLoading(true);
-    fetch("/recipes", {
+    fetch("http://127.0.0.1:3000/flights", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        title,
-        instructions,
-        minutes_to_complete: minutesToComplete,
+        destination: destination,
+        departure: departure,
+        flight_date: flightDate,
+        return_date: returnDate
+        
       }),
     }).then((r) => {
       setIsLoading(false);
@@ -48,33 +42,45 @@ function NewRecipe({ user }) {
   return (
     <Wrapper>
       <WrapperChild>
-        <h2>Create Recipe</h2>
+        <h2>Fly now</h2>
         <form onSubmit={handleSubmit}>
-          <FormField>
-            <Label htmlFor="title">Title</Label>
+        <FormField>
+            <Label htmlFor="destination">Destination</Label>
             <Input
               type="text"
-              id="title"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
+              id="destination"
+              value={destination}
+              onChange={(e) => setDestination(e.target.value)}
             />
           </FormField>
           <FormField>
-            <Label htmlFor="minutesToComplete">Minutes to complete</Label>
+            <Label htmlFor="departure">Departure</Label>
             <Input
-              type="number"
-              id="minutesToComplete"
-              value={minutesToComplete}
-              onChange={(e) => setMinutesToComplete(e.target.value)}
+              type="text"
+              id="departure"
+              value={departure}
+              onChange={(e) => setDeparture(e.target.value)}
             />
           </FormField>
           <FormField>
-            <Label htmlFor="instructions">Instructions</Label>
-            <Textarea
-              id="instructions"
-              rows="10"
-              value={instructions}
-              onChange={(e) => setInstructions(e.target.value)}
+            <Label htmlFor="flightDate">Flight date</Label>
+            <Input
+              type="date"
+              id="flightDate"
+
+              value={flightDate}
+              onChange={(e) => setFlightDate(e.target.value)}
+            />
+          </FormField>
+          <FormField>
+            <Label htmlFor="returnDate">Return Date</Label>
+            <Input
+              id="returnDate"
+              data-date=""
+              type="date"
+              data-date-format="DD MMMM YYYY"
+              value={returnDate}
+              onChange={(e) => setReturnDate(e.target.value)}
             />
           </FormField>
           <FormField>
@@ -90,13 +96,12 @@ function NewRecipe({ user }) {
         </form>
       </WrapperChild>
       <WrapperChild>
-        <h1>{title}</h1>
+        <h1>Flight to: {destination}</h1>
         <p>
-          <em>Time to Complete: {minutesToComplete} minutes</em>
+          <em>Flying from: {departure}</em>
           &nbsp;·&nbsp;
-          <cite>By {user.username}</cite>
+          <cite>By {user.first_name}</cite>
         </p>
-        <ReactMarkdown>{instructions}</ReactMarkdown>
       </WrapperChild>
     </Wrapper>
   );

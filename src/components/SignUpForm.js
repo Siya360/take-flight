@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Button, Error, Input, FormField, Label, Textarea } from "../styles";
+import { Button, Error, Input, FormField, Label } from "../styles";
 
 function SignUpForm({ onLogin }) {
   const [firstName, setFirstName] = useState("");
@@ -18,7 +18,7 @@ function SignUpForm({ onLogin }) {
     setErrors([]);
     setIsLoading(true);
     // console.log(firstName, lastName, email, gender, age, password, passwordConfirmation);
-    fetch("http://127.0.0.1:3000/users", {
+    fetch("http://127.0.0.1:3000/signup", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

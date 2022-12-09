@@ -15,11 +15,11 @@ function NavBar({ user, setUser }) {
   return (
     <Wrapper>
       <Logo>
-        <Link to="/">Reciplease</Link>
+        <Link to="/">My Flights</Link>
       </Logo>
       <Nav>
         <Button as={Link} to="/new">
-          New Recipe
+          New Flight
         </Button>
         <Button variant="outline" onClick={handleLogoutClick}>
           Logout

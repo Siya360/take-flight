@@ -1,42 +1,55 @@
 import { useEffect, useState } from "react";
-import ReactMarkdown from "react-markdown";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
-import { Box, Button } from "../styles";
+import { Button } from "../styles";
 
 function RecipeList() {
-  const [recipes, setRecipes] = useState([]);
+  const [flights, setFlights] = useState("");
 
   useEffect(() => {
-    fetch("/recipes")
+    fetch("http://127.0.0.1:3000/flights")
       .then((r) => r.json())
-      .then(setRecipes);
+      .then((flight) => setFlights(flight));
   }, []);
+  console.log(flights)
 
   return (
     <Wrapper>
-      {recipes.length > 0 ? (
-        recipes.map((recipe) => (
-          <Recipe key={recipe.id}>
-            <Box>
-              <h2>{recipe.title}</h2>
-              <p>
-                <em>Time to Complete: {recipe.minutes_to_complete} minutes</em>
-                &nbsp;·&nbsp;
-                <cite>By {recipe.user.username}</cite>
-              </p>
-              <ReactMarkdown>{recipe.instructions}</ReactMarkdown>
-            </Box>
-          </Recipe>
-        ))
-      ) : (
-        <>
-          <h2>No Recipes Found</h2>
-          <Button as={Link} to="/new">
-            Make a New Recipe
-          </Button>
-        </>
-      )}
+      {/* {flights.length > 0 ? ( */}
+            <table>
+              <thead>
+                <tr>
+                  <th>Flight To</th>
+                  <th>Flight From</th>
+                  <th>Flight Date</th>
+                  <th>Return Date</th>
+                </tr>
+
+              </thead>
+              {/* {flights.map((flight, i) => {
+                console.log(flight)
+                return(
+                  <tbody>
+                    <tr key={i} value={flight}>
+                      <td>{flight.destination}</td>
+                      <td>{flight.departure}</td>
+                      <td>{flight.flight_date}</td>
+                      <td>{flight.return_date}</td>
+                    </tr>                
+                  </tbody>
+                )
+              
+              })} */}
+            </table>
+
+      {/* // ) : (
+      //   <>
+      //     <h2>No Flights Found</h2>
+      //     <Button as={Link} to="/new">
+      //       Book a new flight
+      //     </Button>
+      //   </>
+      // )} */}
     </Wrapper>
   );
 }
@@ -46,8 +59,6 @@ const Wrapper = styled.section`
   margin: 40px auto;
 `;
 
-const Recipe = styled.article`
-  margin-bottom: 24px;
-`;
+
 
 export default RecipeList;
