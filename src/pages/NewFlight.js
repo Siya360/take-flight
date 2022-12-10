@@ -1,9 +1,10 @@
 import { useState } from "react";
 import { useHistory } from "react-router";
 import styled from "styled-components";
+
 import { Button, Error, FormField, Input, Label } from "../styles";
 
-function NewRecipe({ user }) {
+function NewFlight({ user }) {
   const [destination, setDestination] = useState("");
   const [departure, setDeparture] = useState("");
   const [flightDate, setFlightDate] = useState("");
@@ -26,7 +27,8 @@ function NewRecipe({ user }) {
         destination: destination,
         departure: departure,
         flight_date: flightDate,
-        return_date: returnDate
+        return_date: returnDate,
+        user_id: user.id,
         
       }),
     }).then((r) => {
@@ -40,7 +42,10 @@ function NewRecipe({ user }) {
   }
 
   return (
-    <Wrapper>
+    
+    <>
+      <UserHeader>Welcome, {user.first_name}!</UserHeader>
+      <Wrapper>
       <WrapperChild>
         <h2>Fly now</h2>
         <form onSubmit={handleSubmit}>
@@ -85,7 +90,7 @@ function NewRecipe({ user }) {
           </FormField>
           <FormField>
             <Button color="primary" type="submit">
-              {isLoading ? "Loading..." : "Submit Recipe"}
+              {isLoading ? "Loading..." : "Book Now"}
             </Button>
           </FormField>
           <FormField>
@@ -97,19 +102,18 @@ function NewRecipe({ user }) {
       </WrapperChild>
       <WrapperChild>
         <h1>Flight to: {destination}</h1>
-        <p>
-          <em>Flying from: {departure}</em>
-          &nbsp;·&nbsp;
-          <cite>By {user.first_name}</cite>
-        </p>
+      
+        <h1>Flying from: {departure}</h1>
+      
       </WrapperChild>
     </Wrapper>
+    </>
   );
 }
 
 const Wrapper = styled.section`
   max-width: 1000px;
-  margin: 40px auto;
+  margin: 10px auto;
   padding: 16px;
   display: flex;
   gap: 24px;
@@ -118,5 +122,12 @@ const Wrapper = styled.section`
 const WrapperChild = styled.div`
   flex: 1;
 `;
+const UserHeader = styled.h1`
+  font-size: 35px;
+  font-weight: 400;
+  color: indigo;
+  font-family: "Permanent Marker", cursive;
+  margin: 10px;
+  `;
 
-export default NewRecipe;
+export default NewFlight;

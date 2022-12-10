@@ -1,21 +1,22 @@
-import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
 import { Button } from "../styles";
+import "./Flights.css"
 
-function RecipeList() {
-  const [flights, setFlights] = useState("");
+function FlightList({ user }) {
 
-  useEffect(() => {
-    fetch("http://127.0.0.1:3000/flights")
-      .then((r) => r.json())
-      .then((flight) => setFlights(flight));
-  }, []);
-  console.log(flights)
-
+  function handleDelete(id){
+    fetch('http://127.0.0.1:3000/flights/' + id, {
+      method: 'DELETE'
+    })
+    console.log("Deleted")    
+  }
+  
   return (
-    <Wrapper>
-      {/* {flights.length > 0 ? ( */}
+    <>
+      <UserHeader>Welcome, {user.first_name}!</UserHeader>
+      <Wrapper>
+      {user.flights.length > 0 ? (
             <table>
               <thead>
                 <tr>
@@ -26,7 +27,7 @@ function RecipeList() {
                 </tr>
 
               </thead>
-              {/* {flights.map((flight, i) => {
+              {user.flights.map((flight, i) => {
                 console.log(flight)
                 return(
                   <tbody>
@@ -35,22 +36,24 @@ function RecipeList() {
                       <td>{flight.departure}</td>
                       <td>{flight.flight_date}</td>
                       <td>{flight.return_date}</td>
+                      <button onClick={()=>handleDelete(flight.id)}>&#10006;</button>
                     </tr>                
                   </tbody>
                 )
               
-              })} */}
+              })}
             </table>
 
-      {/* // ) : (
-      //   <>
-      //     <h2>No Flights Found</h2>
-      //     <Button as={Link} to="/new">
-      //       Book a new flight
-      //     </Button>
-      //   </>
-      // )} */}
+       ) : (
+         <>
+           <h2>No Flights Found</h2>
+           <Button as={Link} to="/new">
+             Book a new flight
+           </Button>
+         </>
+       )} 
     </Wrapper>
+    </>
   );
 }
 
@@ -59,6 +62,14 @@ const Wrapper = styled.section`
   margin: 40px auto;
 `;
 
+const UserHeader = styled.h1`
+  font-size: 35px;
+  font-weight: 400;
+  color: indigo;
+  font-family: "Permanent Marker", cursive;
+  margin: 10px;
+`;
 
 
-export default RecipeList;
+
+export default FlightList;
