@@ -3,9 +3,14 @@ import styled from "styled-components";
 import LoginForm from "../components/LoginForm";
 import SignUpForm from "../components/SignUpForm";
 import { Button } from "../styles";
+import PropTypes from 'prop-types';
 
-function Login({ onLogin }) {
+const Login = ({ onLogin }) => {
   const [showLogin, setShowLogin] = useState(true);
+
+  Login.propTypes = {
+    onLogin: PropTypes.func.isRequired,
+  };
 
   return (
     <Wrapper>

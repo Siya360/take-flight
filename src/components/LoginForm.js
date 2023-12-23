@@ -1,11 +1,16 @@
 import React, { useState } from "react";
 import { Button, Error, Input, FormField, Label } from "../styles";
+import PropTypes from 'prop-types';
 
-function LoginForm({ onLogin }) {
+const LoginForm = ({ onLogin }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+
+  LoginForm.propTypes = {
+    onLogin: PropTypes.func.isRequired,
+  };
 
   function handleSubmit(e) {
     e.preventDefault();

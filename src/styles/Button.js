@@ -1,53 +1,14 @@
-import styled from "styled-components";
+import React from 'react';
+import { Button as MuiButton } from '@material-ui/core';
+import PropTypes from 'prop-types';
 
-const COLORS = {
-  primary: {
-    "--main": "indigo",
-    "--accent": "white",
-  },
-  secondary: {
-    "--main": "lavenderblush",
-    "--accent": "indigo",
-  },
-};
-
-function Button({ variant = "fill", color = "primary", ...props }) {
-  let Component;
-  if (variant === "fill") {
-    Component = FillButton;
-  } else if (variant === "outline") {
-    Component = OutlineButton;
-  }
-
-  return <Component style={COLORS[color]} {...props} />;
+function Button({ variant = "contained", color = "primary", ...props }) {
+  return <MuiButton variant={variant} color={color} {...props} />;
 }
 
-const ButtonBase = styled.button`
-  cursor: pointer;
-  font-size: 1rem;
-  border: 1px solid transparent;
-  border-radius: 6px;
-  padding: 8px 16px;
-  text-decoration: none;
-`;
-
-const FillButton = styled(ButtonBase)`
-  background-color: var(--main);
-  color: var(--accent);
-
-  &:hover {
-    opacity: 0.9;
-  }
-`;
-
-const OutlineButton = styled(ButtonBase)`
-  background-color: white;
-  color: var(--main);
-  border: 2px solid var(--main);
-
-  &:hover {
-    background: hsl(235deg 85% 97%);
-  }
-`;
+Button.propTypes = {
+  variant: PropTypes.oneOf(['contained', 'outlined', 'text']),
+  color: PropTypes.oneOf(['primary', 'secondary', 'default', 'inherit']),
+};
 
 export default Button;

@@ -1,9 +1,21 @@
-import styled from "styled-components";
+import React from 'react';
+import PropTypes from 'prop-types';
+import { Typography } from '@material-ui/core';
 
-const FormField = styled.div`
-  &:not(:last-child) {
-    margin-bottom: 12px;
-  }
-`;
+const Label = ({ children, ...props }) => {
+  return (
+    <Typography
+      variant="subtitle1"
+      style={{ marginBottom: 8, fontWeight: 700 }}
+      {...props}
+    >
+      {children}
+    </Typography>
+  );
+};
 
-export default FormField;
+Label.propTypes = {
+  children: PropTypes.node, // Validates that children can be any renderable content
+};
+
+export default Label;

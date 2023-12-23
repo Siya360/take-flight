@@ -1,75 +1,55 @@
-import { Link } from "react-router-dom";
-import styled from "styled-components";
-import { Button } from "../styles";
-import "./Flights.css"
+import React from 'react';
+import { useHistory } from 'react-router-dom';
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button } from '@material-ui/core';
 
-function FlightList({ user }) {
+function FlightList() {
+  const history = useHistory();
 
-  function handleDelete(id){
-    fetch('http://127.0.0.1:3000/flights/' + id, {
-      method: 'DELETE'
-    })
-    console.log("Deleted")    
+  function handleBookFlight() {
+    // Directly navigate to the NewFlight page without checking for user
+    history.push('/new');
   }
-  
+
+  const flights = [
+    // ... your flights data here
+  ];
+
   return (
-    <>
-      <UserHeader>Welcome, {user.first_name}!</UserHeader>
-      <Wrapper>
-      {user.flights.length > 0 ? (
-            <table>
-              <thead>
-                <tr>
-                  <th>Flight To</th>
-                  <th>Flight From</th>
-                  <th>Flight Date</th>
-                  <th>Return Date</th>
-                </tr>
-
-              </thead>
-              {user.flights.map((flight, i) => {
-                console.log(flight)
-                return(
-                  <tbody>
-                    <tr key={i} value={flight}>
-                      <td>{flight.destination}</td>
-                      <td>{flight.departure}</td>
-                      <td>{flight.flight_date}</td>
-                      <td>{flight.return_date}</td>
-                      <button onClick={()=>handleDelete(flight.id)}>&#10006;</button>
-                    </tr>                
-                  </tbody>
-                )
-              
-              })}
-            </table>
-
-       ) : (
-         <>
-           <h2>No Flights Found</h2>
-           <Button as={Link} to="/new">
-             Book a new flight
-           </Button>
-         </>
-       )} 
-    </Wrapper>
-    </>
+    <TableContainer component={Paper}>
+      <Table aria-label="flight table">
+        <TableHead>
+          <TableRow>
+            <TableCell>Flight To</TableCell>
+            <TableCell align="right">Flight From</TableCell>
+            <TableCell align="right">Flight Date</TableCell>
+            <TableCell align="right">Return Date</TableCell>
+            <TableCell align="right">Action</TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {flights.length > 0 ? (
+            flights.map((flight) => (
+              <TableRow key={flight.id} hover>
+                <TableCell component="th" scope="row">{flight.destination}</TableCell>
+                <TableCell align="right">{flight.departure}</TableCell>
+                <TableCell align="right">{flight.flight_date}</TableCell>
+                <TableCell align="right">{flight.return_date}</TableCell>
+                <TableCell align="right">
+                  <Button variant="contained" color="primary" onClick={handleBookFlight}>
+                    Book Now
+                  </Button>
+                </TableCell>
+              </TableRow>
+            ))
+          ) : (
+            <TableRow>
+              <TableCell colSpan={5} align="center">No flights available at the moment.</TableCell>
+            </TableRow>
+          )}
+        </TableBody>
+      </Table>
+    </TableContainer>
   );
 }
-
-const Wrapper = styled.section`
-  max-width: 800px;
-  margin: 40px auto;
-`;
-
-const UserHeader = styled.h1`
-  font-size: 35px;
-  font-weight: 400;
-  color: indigo;
-  font-family: "Permanent Marker", cursive;
-  margin: 10px;
-`;
-
-
 
 export default FlightList;

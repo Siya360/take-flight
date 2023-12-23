@@ -1,16 +1,24 @@
-table {
-    border-collapse: collapse;
-    width: 100%;
-}
+import { styled } from '@material-ui/core/styles';
+import { Table, TableRow, TableCell, Button } from '@material-ui/core';
 
-th, td {
-    padding: 8px;
-    text-align: left;
-    border-bottom: 1px solid #DDD;
-}
+const StyledTable = styled(Table)({
+  // ... table styles here
+});
 
-tr:hover {background-color: #D6EEEE;}
+const StyledTableRow = styled(TableRow)({
+  '&:hover': {
+    backgroundColor: '#D6EEEE',
+  },
+  // ... other row styles here
+});
 
-button{
-    color: red;
-}
+const StyledTableCell = styled(TableCell)({
+  padding: '8px',
+  borderBottom: '1px solid #DDD',
+  // ... other cell styles here
+});
+
+const RedButton = styled(Button)({
+  color: 'red',
+  // ... other button styles here
+});

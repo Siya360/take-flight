@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { Button, Error, Input, FormField, Label } from "../styles";
+import PropTypes from 'prop-types';
 
-function SignUpForm({ onLogin }) {
+const SignUpForm = ({ onLogin }) => {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
@@ -13,11 +14,14 @@ function SignUpForm({ onLogin }) {
   const [errors, setErrors] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
 
+  SignUpForm.propTypes = {
+    onLogin: PropTypes.func.isRequired,
+  };
+
   function handleSubmit(e) {
     e.preventDefault();
     setErrors([]);
     setIsLoading(true);
-    // console.log(firstName, lastName, email, gender, age, password, passwordConfirmation);
     fetch("http://127.0.0.1:3000/signup", {
       method: "POST",
       headers: {

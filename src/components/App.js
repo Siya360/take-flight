@@ -1,38 +1,24 @@
-import React, { useEffect, useState } from "react";
-import { Switch, Route } from "react-router-dom";
-import NavBar from "./NavBar";
-import Login from "../pages/Login";
-import FlightList from "../pages/FlightList";
-import NewFlight from "../pages/NewFlight";
+import React from 'react';
+import { Switch, Route } from 'react-router-dom';
+import NavBar from './NavBar';
+import FlightList from '../pages/FlightList';
+import NewFlight from '../pages/NewFlight';
 
 function App() {
-  const [user, setUser] = useState(null);
-  const [errors, setErrors] = useState([]);
-
-  useEffect(() => {
-    // auto-login
-    fetch("http://127.0.0.1:3000/me").then((r) => {
-      if (r.ok) {
-        r.json().then((user) => setUser(user));
-      }else{
-        r.json().then((error) => setErrors(error));
-      }
-    });
-  }, []);
-  console.log(errors)
-
-  if (!user) return <Login onLogin={setUser} />;
-
   return (
     <>
-      <NavBar user={user} setUser={setUser} />
+      <NavBar />
       <main>
         <Switch>
           <Route path="/new">
-            <NewFlight user={user} />
+            <NewFlight />
           </Route>
           <Route path="/">
-            <FlightList user={user} />
+            <FlightList />
+          </Route>
+          {/* Redirect all other paths to the main flight list page */}
+          <Route path="*">
+            <FlightList />
           </Route>
         </Switch>
       </main>
@@ -41,3 +27,5 @@ function App() {
 }
 
 export default App;
+
+

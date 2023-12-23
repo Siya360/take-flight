@@ -1,16 +1,16 @@
-import styled from "styled-components";
+import React from 'react';
+import { TextField } from '@material-ui/core';
 
-const Textarea = styled.textarea`
-  border-radius: 6px;
-  border: 1px solid transparent;
-  border-color: #dbdbdb;
-  -webkit-appearance: none;
-  max-width: 100%;
-  width: 100%;
-  font-size: 1rem;
-  line-height: 1.5;
-  padding: 4px;
-  resize: none;
-`;
+const Textarea = (props) => {
+  return (
+    <TextField
+      multiline
+      variant="outlined"
+      fullWidth
+      {...props}
+    />
+  );
+};
 
 export default Textarea;
+
