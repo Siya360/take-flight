@@ -17,6 +17,11 @@ jobs:
         run: npm test
        # env:
        #  API_KEY: ${{ secrets.boarding_pass }} 
-  
+      - name: Run Linter
+        run: npm run lint
+      - name: Run Linter
+        run: npm run lint
+
+     
 
     # Add additional steps for linting, type checks, etc.
