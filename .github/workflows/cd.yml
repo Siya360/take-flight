@@ -1,0 +1,42 @@
+name: Continuous Deployment
+
+on:
+  push:
+    branches:
+      - main
+    tags:
+      - 'v*'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+
+    # Set up Node.js (if your project requires it)
+    - name: Set up Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: '21.5.0' # Specify your Node.js version
+
+    # Install dependencies
+    - name: Install Dependencies
+      run: npm install
+
+    # Build your project (if required)
+    - name: Build
+      run: npm run build
+
+    # Deployment to Staging
+    - name: Deploy to Staging
+      if: github.ref == 'refs/heads/main'
+      run: echo "Add your deployment script for staging here"
+      # Replace the above echo command with your actual deployment script
+
+    # Deployment to Production
+    - name: Deploy to Production
+      if: startsWith(github.ref, 'refs/tags/')
+      run: echo "Add your deployment script for production here"
+      # Replace the above echo command with your actual deployment script
+
+    # Add any post-deployment steps if necessary
