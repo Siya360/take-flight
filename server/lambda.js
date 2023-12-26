@@ -1,5 +1,7 @@
-// lambda.js
-const serverless = require('serverless-express');
-const app = require('./app'); // Import your Express app
+// Lambda function to run the express app
 
-exports.handler = serverless({ app });
+const serverlessExpress = require('@vendia/serverless-express');
+const app = require('./server'); // Import the Express app
+
+exports.handler = serverlessExpress({ app });
+
