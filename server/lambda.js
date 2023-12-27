@@ -1,7 +1,10 @@
-// Lambda function to run the express app
+const awsServerlessExpress = require('aws-serverless-express');
+const app = require('./server.js'); // Import your Express app
 
-const serverlessExpress = require('@vendia/serverless-express');
-const app = require('./server'); // Import the Express app
+// Create a Serverless Express server from your Express app
+const server = awsServerlessExpress.createServer(app);
 
-exports.handler = serverlessExpress({ app });
-
+exports.handler = (event, context) => {
+  console.log(`EVENT: ${JSON.stringify(event)}`);
+  return awsServerlessExpress.proxy(server, event, context, 'PROMISE').promise;
+};
