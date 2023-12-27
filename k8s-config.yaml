@@ -2,11 +2,12 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: takeflight-deployment
-spec:
+  
+  spec:
   replicas: 3
-  selector:
-    matchLabels:
-      app: takeflight
+selector:
+  matchLabels:
+    app: takeflight
   template:
     metadata:
       labels:
