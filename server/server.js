@@ -1,13 +1,10 @@
 const express = require('express');
 const app = express();
 
+// Define a route that sends a "Hello World" message
 app.get('/', (req, res) => {
   res.send('Hello World!');
 });
 
-const PORT = process.env.PORT || 3001;
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
-
-module.exports = app; // Export for serverless-express
+// Export the app for serverless use
+module.exports = app;
