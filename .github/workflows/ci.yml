@@ -1,25 +1,39 @@
-name: Continuous Integration
+name: Node.js CI
 
-on: [push, pull_request]
+on:
+  push:
+    branches: [ main, development ]
+  pull_request:
+    branches: [ main, development ]
 
 jobs:
-    build:
-      runs-on: ubuntu-latest
-      steps:
-      - uses: actions/checkout@v2
-      - name: Set up Node.js
-        uses: actions/setup-node@v2
-        with:
-          node-version: '20.10.0'
-      - name: Install dependencies
-        run: npm install
-      - name: Run tests
-        run: npm test
-       # env:
-       #  API_KEY: ${{ secrets.boarding_pass }} 
-      - name: Run Linter
-        run: npm run lint
-      - name: Run Linter
-        run: npm run lint
+  setup-and-build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [20.10.0] # Your desired Node.js version
+    steps:
+    - uses: actions/checkout@v2
 
-    # Add additional steps for linting, type checks, etc.
+    - name: Set up Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'yarn'
+
+    - name: Install front-end dependencies
+      run: yarn install
+      working-directory: ./client # Adjust if necessary
+
+    - name: Build front-end
+      run: yarn build
+      working-directory: ./client # Adjust if necessary
+
+    - name: Install back-end dependencies
+      run: yarn install
+      working-directory: ./server # Adjust if necessary
+
+    - name: Build back-end (if you have a build script)
+      run: yarn build
+      working-directory: ./server # Adjust if necessary
+
