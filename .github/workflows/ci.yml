@@ -63,6 +63,4 @@ jobs:
       run: yarn install --frozen-lockfile
       working-directory: server
 
-    - name: Build server project (if applicable)
-      run: yarn build
-      working-directory: server
+    
