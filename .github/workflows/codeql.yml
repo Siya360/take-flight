@@ -1,0 +1,43 @@
+name: "CodeQL"
+
+on:
+  push:
+    branches: [ "main", "development" ]  # Run on pushes to main and development branches
+  pull_request:
+    branches: [ "main", "development" ]  # Run on PRs to main and development branches
+  schedule:
+    - cron: '22 23 * * 2'  # Scheduled run every Tuesday at 23:22 UTC
+
+jobs:
+  analyze:
+    name: Analyze
+    runs-on: ubuntu-latest  # JavaScript analysis can be performed on ubuntu-latest
+    timeout-minutes: 360    # Set timeout as needed
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+
+    strategy:
+      fail-fast: false
+      matrix:
+        language: [ 'javascript' ]  # Specify 'javascript' only since you're not using TypeScript
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Initialize CodeQL
+      uses: github/codeql-action/init@v3
+      with:
+        languages: ${{ matrix.language }}  # Initialize CodeQL for JavaScript
+
+    # The Autobuild step is not necessary for JavaScript as it doesn't require compilation
+    # Remove the Autobuild step for JavaScript projects
+
+    - name: Perform CodeQL Analysis
+      uses: github/codeql-action/analyze@v3
+      with:
+        # The category should be just 'security' for JavaScript without specifying language
+        category: "security"  
+
