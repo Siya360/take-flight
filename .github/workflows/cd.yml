@@ -11,14 +11,17 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
+    - name: Install server dependencies
+      run: |
+        cd server
+        yarn install
+
     # Add Serverless Framework deployment step
     - name: Deploy to AWS Lambda using Serverless Framework
       run: |
-        cd server # Navigate to the server directory if your serverless.yml is there
-        npm install -g serverless # Install Serverless Framework globally
-        serverless deploy --stage dev # Deploy to AWS Lambda
+        cd server
+        yarn global add serverless
+        serverless deploy --stage dev
       env:
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-
-
