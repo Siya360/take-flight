@@ -1,25 +1,68 @@
-name: Continuous Integration
+name: Node.js CI
 
-on: [push, pull_request]
+on:
+  push:
+    branches: [ main, development ]
+  pull_request:
+    branches: [ main, development ]
 
 jobs:
-    build:
-      runs-on: ubuntu-latest
-      steps:
-      - uses: actions/checkout@v2
-      - name: Set up Node.js
-        uses: actions/setup-node@v2
-        with:
-          node-version: '20.10.0'
-      - name: Install dependencies
-        run: npm install
-      - name: Run tests
-        run: npm test
-       # env:
-       #  API_KEY: ${{ secrets.boarding_pass }} 
-      - name: Run Linter
-        run: npm run lint
-      - name: Run Linter
-        run: npm run lint
+  build-and-test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: ['20.10.0'] # LTS version of Node.js
 
-    # Add additional steps for linting, type checks, etc.
+    steps:
+    - uses: actions/checkout@v2
+    
+    - name: Set up Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: ${{ matrix.node-version }}
+    
+    # Cache for client
+    - name: Get yarn cache directory path
+      id: yarn-cache-dir-path-client
+      run: echo "::set-output name=dir::$(yarn cache dir)"
+      working-directory: client
+
+    - uses: actions/cache@v2
+      id: yarn-cache-client # use this to check for 'cache-hit' (`steps.yarn-cache-client.outputs.cache-hit != 'true'`)
+      with:
+        path: ${{ steps.yarn-cache-dir-path-client.outputs.dir }}
+        key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-yarn-
+    
+    # Install and build for the client
+    - name: Install client dependencies
+      run: yarn install --frozen-lockfile
+      working-directory: client
+      
+    - name: Build client project
+      run: yarn build
+      working-directory: client
+      
+    # Cache for server
+    - name: Get yarn cache directory path
+      id: yarn-cache-dir-path-server
+      run: echo "::set-output name=dir::$(yarn cache dir)"
+      working-directory: server
+
+    - uses: actions/cache@v2
+      id: yarn-cache-server # use this to check for 'cache-hit' (`steps.yarn-cache-server.outputs.cache-hit != 'true'`)
+      with:
+        path: ${{ steps.yarn-cache-dir-path-server.outputs.dir }}
+        key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-yarn-
+    
+    # Install and build for the server
+    - name: Install server dependencies
+      run: yarn install --frozen-lockfile
+      working-directory: server
+
+    - name: Build server project (if applicable)
+      run: yarn build
+      working-directory: server
