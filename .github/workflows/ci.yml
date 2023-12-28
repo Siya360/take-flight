@@ -20,24 +20,49 @@ jobs:
       uses: actions/setup-node@v2
       with:
         node-version: ${{ matrix.node-version }}
-        cache: 'yarn'
+    
+    # Cache for client
+    - name: Get yarn cache directory path
+      id: yarn-cache-dir-path-client
+      run: echo "::set-output name=dir::$(yarn cache dir)"
+      working-directory: client
+
+    - uses: actions/cache@v2
+      id: yarn-cache-client # use this to check for 'cache-hit' (`steps.yarn-cache-client.outputs.cache-hit != 'true'`)
+      with:
+        path: ${{ steps.yarn-cache-dir-path-client.outputs.dir }}
+        key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-yarn-
     
     # Install and build for the client
     - name: Install client dependencies
       run: yarn install --frozen-lockfile
-      working-directory: client # This should be the relative path from the root of your repo to the client directory
+      working-directory: client
       
     - name: Build client project
       run: yarn build
-      working-directory: client # This should be the relative path from the root of your repo to the client directory
+      working-directory: client
       
+    # Cache for server
+    - name: Get yarn cache directory path
+      id: yarn-cache-dir-path-server
+      run: echo "::set-output name=dir::$(yarn cache dir)"
+      working-directory: server
+
+    - uses: actions/cache@v2
+      id: yarn-cache-server # use this to check for 'cache-hit' (`steps.yarn-cache-server.outputs.cache-hit != 'true'`)
+      with:
+        path: ${{ steps.yarn-cache-dir-path-server.outputs.dir }}
+        key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-yarn-
+    
     # Install and build for the server
     - name: Install server dependencies
       run: yarn install --frozen-lockfile
-      working-directory: server # This should be the relative path from the root of your repo to the server directory
+      working-directory: server
 
     - name: Build server project (if applicable)
       run: yarn build
-      working-directory: server # This should be the relative path from the root of your repo to the server directory
-      
-    # Add any additional steps for testing or other actions below
+      working-directory: server
