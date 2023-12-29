@@ -1,27 +1,46 @@
+# Name of the Serverless service
 service: take-flight
 
+# Provider configuration
 provider:
+  # Name of the provider, in this case AWS
   name: aws 
+  # Runtime for the functions, in this case Node.js 20.x
   runtime: nodejs20.x
-  stage: dev
-  region: us-east-1 # Choose your preferred AWS region
+  # Stage to deploy to, can be overridden by command line options
+  # Defaults to 'dev' if no stage is specified
+  stage: ${opt:stage, 'dev'}
+  # AWS region to deploy to
+  region: us-east-1
+  # Environment variables available to all functions
   environment:
-    NODE_ENV: production
+    # Node.js environment, set to the same value as the stage
+    NODE_ENV: ${self:provider.stage}
 
+# Function configuration
 functions:
+  # Name of the function
   app:
-    handler: server/lambda.handler
+    # Path to the function handler
+    handler: lambda.handler
+    # Events that trigger the function
     events:
+      # HTTP GET request to the root path
       - http:
           path: /
           method: get
+      # HTTP request to any path (proxy)
       - http:
           path: /{proxy+}
           method: any
 
+# Plugins used by the service
 plugins:
   - serverless-offline
 
+# Custom configuration
 custom:
+  # Configuration for the serverless-offline plugin
   serverless-offline:
+    # Port for the offline server to listen on
     httpPort: 3000
