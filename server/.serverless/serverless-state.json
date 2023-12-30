@@ -10,7 +10,7 @@
       "stage": "dev",
       "region": "us-east-1",
       "environment": {
-        "NODE_ENV": "production"
+        "NODE_ENV": "dev"
       },
       "versionFunctions": true,
       "compiledCloudFormationTemplate": {
@@ -177,7 +177,7 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/take-flight/dev/1703679057856-2023-12-27T12:10:57.856Z/take-flight.zip"
+                "S3Key": "serverless/take-flight/dev/1703977602883-2023-12-30T23:06:42.883Z/lambda_deployment_package.zip"
               },
               "Handler": "server/lambda.handler",
               "Runtime": "nodejs20.x",
@@ -186,7 +186,7 @@
               "Timeout": 6,
               "Environment": {
                 "Variables": {
-                  "NODE_ENV": "production"
+                  "NODE_ENV": "dev"
                 }
               },
               "Role": {
@@ -200,14 +200,14 @@
               "AppLogGroup"
             ]
           },
-          "AppLambdaVersionyh9exe1WCNhAzzljRrNfBT00NPvF2jSUsUKggDIE": {
+          "AppLambdaVersioninOEnYKquPkdq94jwjIKJyioBipTQ5huccPcF4gVg": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "AppLambdaFunction"
               },
-              "CodeSha256": "GQsuIhIQMdY7wZIxJ0/UBIPzgk2DbXLWN0VtmF1/GIY="
+              "CodeSha256": "RRHkgQF6ikcgRFQwoxlHNKDnaySjTaTYHdLr/CNQw4Y="
             }
           },
           "ApiGatewayRestApi": {
@@ -332,7 +332,7 @@
               "AppLambdaPermissionApiGateway"
             ]
           },
-          "ApiGatewayDeployment1703679048594": {
+          "ApiGatewayDeployment1703977600291": {
             "Type": "AWS::ApiGateway::Deployment",
             "Properties": {
               "RestApiId": {
@@ -395,7 +395,7 @@
           "AppLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "AppLambdaVersionyh9exe1WCNhAzzljRrNfBT00NPvF2jSUsUKggDIE"
+              "Ref": "AppLambdaVersioninOEnYKquPkdq94jwjIKJyioBipTQ5huccPcF4gVg"
             },
             "Export": {
               "Name": "sls-take-flight-dev-AppLambdaFunctionQualifiedArn"
@@ -547,7 +547,7 @@
         "timeout": 6,
         "runtime": "nodejs20.x",
         "vpc": {},
-        "versionLogicalId": "AppLambdaVersionyh9exe1WCNhAzzljRrNfBT00NPvF2jSUsUKggDIE"
+        "versionLogicalId": "AppLambdaVersioninOEnYKquPkdq94jwjIKJyioBipTQ5huccPcF4gVg"
       }
     },
     "configValidationMode": "warn",
@@ -556,6 +556,11 @@
       "service": "take-flight",
       "provider": {
         "$ref": "$[\"service\"][\"provider\"]"
+      },
+      "package": {
+        "artifact": "lambda_deployment_package.zip",
+        "artifactsS3KeyDirname": "serverless/take-flight/dev/code-artifacts",
+        "artifactDirectoryName": "serverless/take-flight/dev/1703977602883-2023-12-30T23:06:42.883Z"
       },
       "functions": {
         "$ref": "$[\"service\"][\"functions\"]"
@@ -568,11 +573,10 @@
       }
     },
     "layers": {},
-    "isDashboardMonitoringPreconfigured": false,
-    "artifact": "/Users/suprim_being/Developer/Projects/za_flight/flight-client/server/.serverless/take-flight.zip"
+    "isDashboardMonitoringPreconfigured": false
   },
   "package": {
-    "artifactDirectoryName": "serverless/take-flight/dev/1703679057856-2023-12-27T12:10:57.856Z",
-    "artifact": "take-flight.zip"
+    "artifactDirectoryName": "serverless/take-flight/dev/1703977602883-2023-12-30T23:06:42.883Z",
+    "artifact": "lambda_deployment_package.zip"
   }
 }
