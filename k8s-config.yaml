@@ -1,40 +1,57 @@
+# This is a Deployment - a Kubernetes resource that manages a replicated application on your cluster
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  # The name of the Deployment
   name: takeflight-deployment
   
-  spec:
+spec:
+  # The number of Pod replicas to run on the cluster
   replicas: 3
-selector:
-  matchLabels:
-    app: takeflight
+  # A selector is used to identify the Pods that this Deployment manages
+  selector:
+    matchLabels:
+      app: takeflight
+  # The template for the Pods that the Deployment manages
   template:
     metadata:
       labels:
         app: takeflight
     spec:
       containers:
-       - name: takeflight
-    image: siyar/takeflight:latest
-    ports:
-    - containerPort: 80
-    resources:
-      limits:
-        cpu: "1"
-        memory: "500Mi"
-      requests:
-        cpu: "0.5"
-        memory: "200Mi"
+        # The name of the container within the Pod
+        - name: takeflight
+          # The Docker image to run in the container
+          image: siyar/takeflight:latest
+          # The ports that the container exposes
+          ports:
+            - containerPort: 80
+          # The resource requirements for the container
+          resources:
+            # The maximum amount of CPU the container can use
+            limits:
+              cpu: "1"
+              # The maximum amount of memory the container can use
+              memory: "500Mi"
+            # The amount of CPU and memory the container is guaranteed
+            requests:
+              cpu: "0.5"
+              memory: "200Mi"
 
+# This is a Service - a Kubernetes resource that is an abstraction which defines a logical set of Pods and a policy by which to access them
 ---
 apiVersion: v1
 kind: Service
 metadata:
+  # The name of the Service
   name: takeflight-service
 spec:
+  # A selector to find the Pods that this Service will route traffic to
   selector:
     app: takeflight
+  # The ports that the Service exposes
   ports:
     - protocol: TCP
       port: 80
+  # The type of the Service. A LoadBalancer Service is externally accessible and can receive traffic from outside the cluster
   type: LoadBalancer
