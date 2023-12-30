@@ -28,7 +28,7 @@ jobs:
       working-directory: client
 
     - uses: actions/cache@v2
-      id: yarn-cache-client # use this to check for 'cache-hit' (`steps.yarn-cache-client.outputs.cache-hit != 'true'`)
+      id: yarn-cache-client # use this to check for the 'cache-hit' (`steps.yarn-cache-client.outputs.cache-hit != 'true'`)
       with:
         path: ${{ steps.yarn-cache-dir-path-client.outputs.dir }}
         key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
