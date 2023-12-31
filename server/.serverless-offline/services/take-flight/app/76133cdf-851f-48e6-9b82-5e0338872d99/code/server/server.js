@@ -1,5 +1,3 @@
-require('graceful-fs').gracefulify(require('fs'));
-
 const express = require('express');
 const app = express();
 
