@@ -1,19 +1,33 @@
-import React from 'react';
+// Import necessary hooks and components from React, React Router, and Material UI
+import React, { useState, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button } from '@material-ui/core';
 
-function FlightList() {
-  const history = useHistory();
+// Import the fetchFlights function from the API utility
+import { fetchFlights } from '../utils/api';
 
+// Define the FlightList component
+function FlightList() {
+  // Use the useHistory hook to allow for navigation
+  const history = useHistory();
+  // Use the useState hook to manage the flights state
+  const [flights, setFlights] = useState([]);
+
+  // Use the useEffect hook to fetch flights when the component mounts
+  useEffect(() => {
+    // Use the fetchFlights function from the API utility to fetch flights
+    fetchFlights()
+      .then(data => setFlights(data)) // Update the flights state with the fetched data
+      .catch(error => console.error('Error fetching flights:', error)); // Log any errors
+  }, []); // Empty dependency array means this effect runs once on mount
+
+  // Define a function to handle booking a flight
   function handleBookFlight() {
-    // Directly navigate to the NewFlight page without checking for user
+    // Navigate to the /new route
     history.push('/new');
   }
 
-  const flights = [
-    // ... your flights data here
-  ];
-
+  // Render the component
   return (
     <TableContainer component={Paper}>
       <Table aria-label="flight table">
@@ -28,6 +42,7 @@ function FlightList() {
         </TableHead>
         <TableBody>
           {flights.length > 0 ? (
+            // If there are flights, map over them and create a table row for each one
             flights.map((flight) => (
               <TableRow key={flight.id} hover>
                 <TableCell component="th" scope="row">{flight.destination}</TableCell>
@@ -42,6 +57,7 @@ function FlightList() {
               </TableRow>
             ))
           ) : (
+            // If there are no flights, display a message
             <TableRow>
               <TableCell colSpan={5} align="center">No flights available at the moment.</TableCell>
             </TableRow>
@@ -52,4 +68,5 @@ function FlightList() {
   );
 }
 
+// Export the FlightList component as the default export
 export default FlightList;
