@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import { Button, TextField, Typography, Container, CircularProgress, Box } from '@material-ui/core';
+import { createFlight } from '../utils/api'; // Import the API utility function
 
 const NewFlight = () => {
   const [destination, setDestination] = useState('');
@@ -10,14 +11,28 @@ const NewFlight = () => {
   const [isLoading, setIsLoading] = useState(false);
   const history = useHistory();
 
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault();
     setIsLoading(true);
-    // Mock a successful flight creation and navigate back to the flight list
-    setTimeout(() => {
-      setIsLoading(false);
-      history.push('/');
-    }, 1000);
+
+    // Construct the flight data object
+    const flightData = {
+      destination,
+      departure,
+      flightDate,
+      returnDate,
+    };
+
+    try {
+      // Use the createFlight API utility to send the data
+      const result = await createFlight(flightData);
+      console.log(result); // Log the result or handle as needed
+      history.push('/'); // Navigate back to the flight list
+    } catch (error) {
+      console.error(error); // Handle the error appropriately
+    } finally {
+      setIsLoading(false); // Stop the loading indicator
+    }
   }
 
   return (
