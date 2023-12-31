@@ -12,6 +12,7 @@
         "eventstream",
         "filenamify",
         "Fira",
+        "gracefulify",
         "hapi",
         "hoek",
         "imds",
