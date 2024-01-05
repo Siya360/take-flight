@@ -3,6 +3,11 @@
   "version": "1.0.0",
   "main": "index.js",
   "license": "MIT",
+  "scripts": {
+    "start": "serverless offline start",
+    "deploy": "serverless deploy",
+    "remove": "serverless remove"
+  },
   "dependencies": {
     "@aws-sdk/client-cognito-identity-provider": "^3.485.0",
     "aws-sdk": "^2.1528.0",

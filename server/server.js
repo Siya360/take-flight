@@ -3,11 +3,41 @@ const AWS = require('aws-sdk');
 const bodyParser = require('body-parser');
 const { validateToken } = require('./authMiddleware');
 const { CognitoIdentityProviderClient, SignUpCommand } = require("@aws-sdk/client-cognito-identity-provider");
+const fs = require('fs');
+const wtf = require('wtfnode');
 
 // Configure AWS SDK
-const { CognitoIdentityProviderClient, SignUpCommand } = require("@aws-sdk/client-cognito-identity-provider");
-
 const client = new CognitoIdentityProviderClient({ region: "us-east-1" });
+
+// Global error handlers
+process.on('uncaughtException', (error) => {
+  console.error('Uncaught Exception:', error);
+  
+  // Write the error and stack trace to a log file asynchronously
+  fs.appendFile('error.log', `Uncaught Exception: ${error}\nStack Trace: ${error.stack}\n`, err => {
+    if (err) console.error('Error writing to log file:', err);
+  });
+
+  // Dump open handles
+  wtf.dump();
+
+  process.exit(1);
+});
+
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('Unhandled Rejection at:', promise, 'reason:', reason);
+
+  // Serialize 'promise' and 'reason' to a string for better logging
+  const promiseString = JSON.stringify(promise, null, 2);
+  const reasonString = reason instanceof Error ? reason.stack : JSON.stringify(reason, null, 2);
+
+  // Write to log file
+  fs.appendFile('error.log', `Unhandled Rejection at: ${promiseString}, reason: ${reasonString}\n`, err => {
+    if (err) console.error('Error writing to log file:', err);
+  });
+
+  wtf.dump();
+});
 
 app.post('/register', async (req, res) => {
   const { username, password, email } = req.body;
