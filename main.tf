@@ -92,7 +92,7 @@ source_code_hash = filebase64sha256("server/lambda_functions/send_welcome_email.
     }
   }
 }
-git commit -m "Track large file with Git LFS"resource "aws_cognito_user_pool" "FlightBookingsUserPool" {
+resource "aws_cognito_user_pool" "FlightBookingsUserPool" {
   name = "FlightBookingsUserPool" 
 
   password_policy {
