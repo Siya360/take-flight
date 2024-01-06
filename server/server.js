@@ -4,7 +4,6 @@ const bodyParser = require('body-parser');
 const { validateToken } = require('./authMiddleware');
 const { CognitoIdentityProviderClient, SignUpCommand } = require("@aws-sdk/client-cognito-identity-provider");
 const fs = require('fs');
-const wtf = require('wtfnode');
 
 // Configure AWS SDK
 const client = new CognitoIdentityProviderClient({ region: "us-east-1" });
@@ -17,9 +16,6 @@ process.on('uncaughtException', (error) => {
   fs.appendFile('error.log', `Uncaught Exception: ${error}\nStack Trace: ${error.stack}\n`, err => {
     if (err) console.error('Error writing to log file:', err);
   });
-
-  // Dump open handles
-  wtf.dump();
 
   process.exit(1);
 });
