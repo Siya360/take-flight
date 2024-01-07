@@ -21,7 +21,6 @@
     "lambda": "^0.10.3",
     "serverless": "^3.38.0",
     "serverless-express": "^2.0.12",
-    "serverless-offline": "^13.3.2",
-    "wtfnode": "^0.9.1"
+    "serverless-offline": "^13.3.2"
   }
 }
