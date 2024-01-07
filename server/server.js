@@ -1,9 +1,11 @@
 const express = require('express');
 const AWS = require('aws-sdk');
+require('dotenv').config();
 const bodyParser = require('body-parser');
 const { validateToken } = require('./authMiddleware');
 const { CognitoIdentityProviderClient, SignUpCommand } = require("@aws-sdk/client-cognito-identity-provider");
 const fs = require('fs');
+const app = express();
 
 // Configure AWS SDK
 const client = new CognitoIdentityProviderClient({ region: "us-east-1" });
@@ -39,7 +41,7 @@ app.post('/register', async (req, res) => {
   const { username, password, email } = req.body;
 
   const params = {
-    ClientId: '4dvvaqvf51gvp35rpvpebe6jbg', // Replace with your user pool client ID
+    ClientId: process.env.COGNITO_CLIENT_ID, // Read from environment variables
     Username: username,
     Password: password,
     UserAttributes: [
@@ -71,7 +73,7 @@ app.post('/login', (req, res) => {
 
   const params = {
     AuthFlow: 'USER_PASSWORD_AUTH',
-    ClientId: '4dvvaqvf51gvp35rpvpebe6jbg', // Replace with your user pool client ID
+    ClientId: process.env.COGNITO_CLIENT_ID, // Read from environment variables
     AuthParameters: {
       USERNAME: username,
       PASSWORD: password
@@ -138,7 +140,7 @@ app.post('/user/change-password', validateToken, (req, res) => {
 // Initiate a forgot password flow
 app.post('/user/forgot-password', (req, res) => {
   const { username } = req.body;
-  const clientId = process.env.COGNITO_CLIENT_ID; // Replace with environment variable
+  const clientId = process.env.COGNITO_CLIENT_ID; // Value defined in environment variable
 
   const params = {
     Username: username,
@@ -158,7 +160,7 @@ app.post('/user/forgot-password', (req, res) => {
 // Confirm new password after a forgot password request
 app.post('/user/confirm-forgot-password', (req, res) => {
   const { username, confirmationCode, newPassword } = req.body;
-  const clientId = process.env.COGNITO_CLIENT_ID; // Replace with environment variable
+  const clientId = process.env.COGNITO_CLIENT_ID; // Value defined in environment variable
 
   const params = {
     Username: username,
@@ -225,7 +227,7 @@ app.post('/token/refresh', (req, res) => {
 
   const params = {
     AuthFlow: 'REFRESH_TOKEN_AUTH',
-    ClientId: '4dvvaqvf51gvp35rpvpebe6jbg', // Replace with your user pool client ID
+    ClientId: process.env.COGNITO_CLIENT_ID, // Read from environment variables
     AuthParameters: {
       'REFRESH_TOKEN': refreshToken
     }
