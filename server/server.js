@@ -1,5 +1,4 @@
 const express = require('express');
-const AWS = require('aws-sdk');
 require('dotenv').config();
 const bodyParser = require('body-parser');
 const { validateToken } = require('./authMiddleware');
@@ -8,7 +7,7 @@ const fs = require('fs');
 const app = express();
 
 // Configure AWS SDK
-const client = new CognitoIdentityProviderClient({ region: "us-east-1" });
+const client = new CognitoIdentityProviderClient({ region: process.env.COGNITO_REGION });
 
 // Global error handlers
 process.on('uncaughtException', (error) => {
