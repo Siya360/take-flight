@@ -1,5 +1,4 @@
 const express = require('express');
-const AWS = require('aws-sdk');
 require('dotenv').config();
 const bodyParser = require('body-parser');
 const { validateToken } = require('./authMiddleware');
