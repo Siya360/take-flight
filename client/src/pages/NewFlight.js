@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
-import { Button, TextField, Typography, Container, CircularProgress, Box, MenuItem } from '@material-ui/core';
+import { Button, TextField, Typography, Container, CircularProgress, Grid, MenuItem } from '@material-ui/core';
 import { createFlight } from '../utils/api'; // Import the API utility function
 
 const NewFlight = () => {
@@ -52,106 +52,114 @@ const NewFlight = () => {
   }
 
   // JSX for the form component
+
   return (
-    <Container maxWidth="sm">
-      <Typography variant="h4" component="h1" gutterBottom>
+    <Container maxWidth="lg">
+      <Typography variant="h4" component="h1" gutterBottom align="center">
         Search for Flights
       </Typography>
       <form onSubmit={handleSubmit} noValidate>
-        {/* Input fields for flight details */}
-        <TextField
-          label="Enter Departure"
-          variant="outlined"
-          fullWidth
-          margin="normal"
-          value={departure}
-          onChange={(e) => setDeparture(e.target.value)}
-        />
-        <TextField
-          label="Enter Destination"
-          variant="outlined"
-          fullWidth
-          margin="normal"
-          value={destination}
-          onChange={(e) => setDestination(e.target.value)}
-        />
-         <TextField
-          label="Flight Date"
-          type="date"
-          InputLabelProps={{ shrink: true }}
-          variant="outlined"
-          fullWidth
-          margin="normal"
-          value={flightDate}
-          onChange={(e) => setFlightDate(e.target.value)}
-        />
-        <TextField
-          label="Return Date"
-          type="date"
-          InputLabelProps={{ shrink: true }}
-          variant="outlined"
-          fullWidth
-          margin="normal"
-          value={returnDate}
-          onChange={(e) => setReturnDate(e.target.value)}
-        />
-        {/* Input fields for passenger numbers */}
-        <TextField
-          label="Adults (18+)"
-          type="number"
-          InputProps={{ inputProps: { min: 1, max: 9 } }}
-          variant="outlined"
-          fullWidth
-          margin="normal"
-          value={adults}
-          onChange={(e) => setAdults(Number(e.target.value))}
-        />
-        <TextField
-          label="Children (2-11)"
-          type="number"
-          InputProps={{ inputProps: { min: 0, max: 9 } }}
-          variant="outlined"
-          fullWidth
-          margin="normal"
-          value={children}
-          onChange={(e) => setChildren(Number(e.target.value))}
-        />
-        <TextField
-          label="Infants (Under 2)"
-          type="number"
-          InputProps={{ inputProps: { min: 0, max: 9 } }}
-          variant="outlined"
-          fullWidth
-          margin="normal"
-          value={infants}
-          onChange={(e) => setInfants(Number(e.target.value))}
-        />
-        <TextField
-          select
-          label="Cabin Class"
-          value={cabinClass}
-          onChange={(e) => setCabinClass(e.target.value)}
-          variant="outlined"
-          fullWidth
-          margin="normal"
-        >
-          <MenuItem value="Economy">Economy</MenuItem>
-          <MenuItem value="Premium Economy">Premium Economy</MenuItem>
-          <MenuItem value="Business">Business</MenuItem>
-          <MenuItem value="First Class">First Class</MenuItem>
-        </TextField>
-        {/* Submit button with loading indicator */}
-        <Box mt={2}>
-          <Button
-            type="submit"
-            variant="contained"
-            color="primary"
+        <Grid container spacing={2} alignItems="center">
+          <Grid item xs={12} md={3}>
+            <TextField
+              label="Enter Departure"
+              variant="outlined"
+              fullWidth
+              value={departure}
+              onChange={(e) => setDeparture(e.target.value)}
+            />
+          </Grid>
+          <Grid item xs={12} md={3}>
+            <TextField
+              label="Enter Destination"
+              variant="outlined"
+              fullWidth
+              value={destination}
+              onChange={(e) => setDestination(e.target.value)}
+            />
+          </Grid>
+          <Grid item xs={12} md={2}>
+            <TextField
+              label="Flight Date"
+              type="date"
+              InputLabelProps={{ shrink: true }}
+              variant="outlined"
+              fullWidth
+              value={flightDate}
+              onChange={(e) => setFlightDate(e.target.value)}
+            />
+          </Grid>
+          <Grid item xs={12} md={2}>
+            <TextField
+              label="Return Date"
+              type="date"
+              InputLabelProps={{ shrink: true }}
+              variant="outlined"
+              fullWidth
+              value={returnDate}
+              onChange={(e) => setReturnDate(e.target.value)}
+            />
+          </Grid>
+          <Grid item xs={12} sm={6} md={2}>
+          <TextField
+            label="Adults (16+)"
+            type="number"
+            InputProps={{ inputProps: { min: 1, max: 9 } }}
+            variant="outlined"
             fullWidth
-            disabled={isLoading}
-          >
-            {isLoading ? <CircularProgress size={24} /> : 'Search Flights'}
-          </Button>
-        </Box>
+            value={adults}
+            onChange={(e) => setAdults(Number(e.target.value))}
+          />
+        </Grid>
+        <Grid item xs={12} sm={6} md={2}>
+          <TextField
+            label="Children (2-15)"
+            type="number"
+            InputProps={{ inputProps: { min: 0, max: 9 } }}
+            variant="outlined"
+            fullWidth
+            value={children}
+            onChange={(e) => setChildren(Number(e.target.value))}
+          />
+        </Grid>
+        <Grid item xs={12} sm={6} md={2}>
+          <TextField
+            label="Infants (Under 2)"
+            type="number"
+            InputProps={{ inputProps: { min: 0, max: 9 } }}
+            variant="outlined"
+            fullWidth
+            value={infants}
+            onChange={(e) => setInfants(Number(e.target.value))}
+          />
+        </Grid>
+          <Grid item xs={12} md={2}>
+            <TextField
+              select
+              label="Cabin Class"
+              value={cabinClass}
+              onChange={(e) => setCabinClass(e.target.value)}
+              variant="outlined"
+              fullWidth
+            >
+              <MenuItem value="Economy">Economy</MenuItem>
+              <MenuItem value="Premium Economy">Premium Economy</MenuItem>
+              <MenuItem value="Business">Business</MenuItem>
+              <MenuItem value="First Class">First Class</MenuItem>
+            </TextField>
+          </Grid>
+          <Grid item xs={12} md={2}>
+            <Button
+              type="submit"
+              variant="contained"
+              color="primary"
+              fullWidth
+              disabled={isLoading}
+            >
+              {isLoading ? <CircularProgress size={24} /> : 'Search Flights'}
+            </Button>
+          </Grid>
+        </Grid>
       </form>
     </Container>
   );
