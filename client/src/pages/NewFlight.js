@@ -1,9 +1,20 @@
 import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
-import { Button, TextField, Typography, Container, CircularProgress, Grid, MenuItem } from '@material-ui/core';
+import { Button, TextField, Typography, Container, CircularProgress, Grid, MenuItem, Paper } from '@material-ui/core';
 import { createFlight } from '../utils/api'; // Import the API utility function
+import { makeStyles } from '@material-ui/core/styles';
+
+// Define your custom styles
+const useStyles = makeStyles((theme) => ({
+  inputField: {
+    backgroundColor: 'white', // Set the background color for input fields
+    // Add other styles if needed
+  },
+  // ... other styles
+}));
 
 const NewFlight = () => {
+  const classes = useStyles();
   // State variables for flight details
   const [destination, setDestination] = useState('');
   const [departure, setDeparture] = useState('');
@@ -51,15 +62,23 @@ const NewFlight = () => {
     }
   }
 
-  // JSX for the form component
-
-  return (
-    <Container maxWidth="lg">
-      <Typography variant="h4" component="h1" gutterBottom align="center">
-        Search for Flights
-      </Typography>
-      <form onSubmit={handleSubmit} noValidate>
-        <Grid container spacing={2} alignItems="center">
+  // Add custom styles for the Paper component
+  const paperStyle = {
+    padding: '40px',
+    marginTop: '5px',
+    marginBottom: '40px',
+    backgroundColor: '#3f51b5', 
+    color: 'white' // Text color for better readability
+  };
+     
+return (
+  <Paper style={paperStyle} elevation={3}>
+      <Container maxWidth="md"> {/* Set maxWidth to your desired width */}
+        <Typography variant="h4" component="h1" gutterBottom align="center">
+          Search for Flights
+        </Typography>
+        <form onSubmit={handleSubmit} noValidate>
+          <Grid container spacing={2} alignItems="center">
           <Grid item xs={12} md={3}>
             <TextField
               label="Enter Departure"
@@ -67,6 +86,7 @@ const NewFlight = () => {
               fullWidth
               value={departure}
               onChange={(e) => setDeparture(e.target.value)}
+              className={classes.inputField}
             />
           </Grid>
           <Grid item xs={12} md={3}>
@@ -76,6 +96,7 @@ const NewFlight = () => {
               fullWidth
               value={destination}
               onChange={(e) => setDestination(e.target.value)}
+              className={classes.inputField}
             />
           </Grid>
           <Grid item xs={12} md={2}>
@@ -87,6 +108,7 @@ const NewFlight = () => {
               fullWidth
               value={flightDate}
               onChange={(e) => setFlightDate(e.target.value)}
+              className={classes.inputField}
             />
           </Grid>
           <Grid item xs={12} md={2}>
@@ -98,6 +120,7 @@ const NewFlight = () => {
               fullWidth
               value={returnDate}
               onChange={(e) => setReturnDate(e.target.value)}
+              className={classes.inputField}
             />
           </Grid>
           <Grid item xs={12} sm={6} md={2}>
@@ -109,6 +132,7 @@ const NewFlight = () => {
             fullWidth
             value={adults}
             onChange={(e) => setAdults(Number(e.target.value))}
+            className={classes.inputField}
           />
         </Grid>
         <Grid item xs={12} sm={6} md={2}>
@@ -120,6 +144,7 @@ const NewFlight = () => {
             fullWidth
             value={children}
             onChange={(e) => setChildren(Number(e.target.value))}
+            className={classes.inputField}
           />
         </Grid>
         <Grid item xs={12} sm={6} md={2}>
@@ -131,6 +156,7 @@ const NewFlight = () => {
             fullWidth
             value={infants}
             onChange={(e) => setInfants(Number(e.target.value))}
+            className={classes.inputField}
           />
         </Grid>
           <Grid item xs={12} md={2}>
@@ -146,6 +172,7 @@ const NewFlight = () => {
               <MenuItem value="Premium Economy">Premium Economy</MenuItem>
               <MenuItem value="Business">Business</MenuItem>
               <MenuItem value="First Class">First Class</MenuItem>
+              className={classes.inputField}
             </TextField>
           </Grid>
           <Grid item xs={12} md={2}>
@@ -162,6 +189,7 @@ const NewFlight = () => {
         </Grid>
       </form>
     </Container>
+    </Paper>    
   );
 };
 
