@@ -1,14 +1,14 @@
 import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
-import { Button, TextField, Typography, Container, CircularProgress, Grid, MenuItem, Paper } from '@material-ui/core';
-import { createFlight } from '../utils/api'; // Import the API utility function
+import { Button, TextField, Typography, Container, CircularProgress, Grid, MenuItem, Paper, Popover, Box} from '@material-ui/core';
+import { createFlight } from '../utils/api';
 import { makeStyles } from '@material-ui/core/styles';
 
 // Define your custom styles
 const useStyles = makeStyles((theme) => ({
   inputField: {
     backgroundColor: 'white', // Set the background color for input fields
-    // Add other styles if needed
+    // Add other styles to enhance the look and feel
   },
   // ... other styles
 }));
@@ -20,16 +20,26 @@ const NewFlight = () => {
   const [departure, setDeparture] = useState('');
   const [flightDate, setFlightDate] = useState('');
   const [returnDate, setReturnDate] = useState('');
-  // State variables for passenger numbers
+  const [cabinClass, setCabinClass] = useState('Economy');
+  const [isLoading, setIsLoading] = useState(false);
+  const history = useHistory();
+
+  // State and functions for Travellers popover
+  const [travellersAnchorEl, setTravellersAnchorEl] = useState(null);
   const [adults, setAdults] = useState(1);
   const [children, setChildren] = useState(0);
   const [infants, setInfants] = useState(0);
-  // State variable for cabin class selection
-  const [cabinClass, setCabinClass] = useState('Economy');
-  // State variable for loading state
-  const [isLoading, setIsLoading] = useState(false);
-  // Hook for navigation
-  const history = useHistory();
+
+  const handleTravellersClick = (event) => {
+    setTravellersAnchorEl(event.currentTarget);
+  };
+
+  const handleTravellersClose = () => {
+    setTravellersAnchorEl(null);
+  };
+
+  const openTravellers = Boolean(travellersAnchorEl);
+  const id = openTravellers ? 'travellers-popover' : undefined;
 
   // Function to handle form submission
   async function handleSubmit(e) {
@@ -71,8 +81,8 @@ const NewFlight = () => {
     color: 'white' // Text color for better readability
   };
      
-return (
-  <Paper style={paperStyle} elevation={3}>
+  return (
+   <Paper style={paperStyle} elevation={3}>
       <Container maxWidth="md"> {/* Set maxWidth to your desired width */}
         <Typography variant="h4" component="h1" gutterBottom align="center">
           Search for Flights
@@ -124,47 +134,74 @@ return (
             />
           </Grid>
           <Grid item xs={12} sm={6} md={2}>
-          <TextField
-            label="Adults (16+)"
-            type="number"
-            InputProps={{ inputProps: { min: 1, max: 9 } }}
-            variant="outlined"
-            fullWidth
-            value={adults}
-            onChange={(e) => setAdults(Number(e.target.value))}
-            className={classes.inputField}
-          />
-        </Grid>
-        <Grid item xs={12} sm={6} md={2}>
-          <TextField
-            label="Children (2-15)"
-            type="number"
-            InputProps={{ inputProps: { min: 0, max: 9 } }}
-            variant="outlined"
-            fullWidth
-            value={children}
-            onChange={(e) => setChildren(Number(e.target.value))}
-            className={classes.inputField}
-          />
-        </Grid>
-        <Grid item xs={12} sm={6} md={2}>
-          <TextField
-            label="Infants (Under 2)"
-            type="number"
-            InputProps={{ inputProps: { min: 0, max: 9 } }}
-            variant="outlined"
-            fullWidth
-            value={infants}
-            onChange={(e) => setInfants(Number(e.target.value))}
-            className={classes.inputField}
-          />
-        </Grid>
+            <Button
+                aria-describedby={id}
+                variant="outlined"
+                onClick={handleTravellersClick}
+                className={classes.inputField}
+              >
+                Travellers
+              </Button>
+              <Popover
+                id={id}
+                open={openTravellers}
+                anchorEl={travellersAnchorEl}
+                onClose={handleTravellersClose}
+                anchorOrigin={{
+                  vertical: 'bottom',
+                  horizontal: 'center',
+                }}
+                transformOrigin={{
+                  vertical: 'top',
+                  horizontal: 'center',
+                }}
+              >
+                <Box p={2}>
+                  <Grid container spacing={1}>
+                    <Grid item xs={12}>
+                      <TextField
+                        label="Adults (16+)"
+                        type="number"
+                        InputProps={{ inputProps: { min: 1, max: 9 } }}
+                        variant="outlined"
+                        fullWidth
+                        value={adults}
+                        onChange={(e) => setAdults(Number(e.target.value))}
+                      />
+                    </Grid>
+                    <Grid item xs={12}>
+                      <TextField
+                        label="Children (2-15)"
+                        type="number"
+                        InputProps={{ inputProps: { min: 0, max: 9 } }}
+                        variant="outlined"
+                        fullWidth
+                        value={children}
+                        onChange={(e) => setChildren(Number(e.target.value))}
+                    />
+                    </Grid>
+                    <Grid item xs={12}>
+                      <TextField
+                        label="Infants (Under 2)"
+                        type="number"
+                        InputProps={{ inputProps: { min: 0, max: 9 } }}
+                        variant="outlined"
+                        fullWidth
+                        value={infants}
+                        onChange={(e) => setInfants(Number(e.target.value))}
+                      />
+                    </Grid>
+                  </Grid>
+                </Box>
+              </Popover>
+            </Grid>
           <Grid item xs={12} md={2}>
             <TextField
               select
               label="Cabin Class"
               value={cabinClass}
               onChange={(e) => setCabinClass(e.target.value)}
+              className={classes.inputField}
               variant="outlined"
               fullWidth
             >
@@ -172,7 +209,6 @@ return (
               <MenuItem value="Premium Economy">Premium Economy</MenuItem>
               <MenuItem value="Business">Business</MenuItem>
               <MenuItem value="First Class">First Class</MenuItem>
-              className={classes.inputField}
             </TextField>
           </Grid>
           <Grid item xs={12} md={2}>
