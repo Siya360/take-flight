@@ -1,8 +1,8 @@
 // Import necessary hooks and components from React, React Router, and Material UI
 import React, { useState, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button } from '@material-ui/core';
-
+import { Grid, Typography } from '@material-ui/core';
+import FlightCard from './FlightCard'; // Adjust the relative path as necessary
 // Import the fetchFlights function from the API utility
 import { fetchFlights } from '../utils/api';
 
@@ -13,58 +13,48 @@ function FlightList() {
   // Use the useState hook to manage the flights state
   const [flights, setFlights] = useState([]);
 
+// State variables for flight details
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
+
   // Use the useEffect hook to fetch flights when the component mounts
   useEffect(() => {
-    // Use the fetchFlights function from the API utility to fetch flights
     fetchFlights()
-      .then(data => setFlights(data)) // Update the flights state with the fetched data
-      .catch(error => console.error('Error fetching flights:', error)); // Log any errors
-  }, []); // Empty dependency array means this effect runs once on mount
+      .then(data => {
+        setFlights(data);
+        setIsLoading(false);
+      })
+      .catch(err => {
+        setError(err);
+        setIsLoading(false);
+      });
+  }, []);
 
-  // Define a function to handle booking a flight
-  function handleBookFlight() {
-    // Navigate to the /new route
-    history.push('/new');
+  const handleBookFlight = (flightId) => {
+    console.log('Book flight:', flightId);
+    history.push(`/flight-details/${flightId}`);
+  };
+
+  if (isLoading) {
+    return <Typography>Loading flights...</Typography>;
+  }
+
+  if (error) {
+    return <Typography>Error fetching flights: {error.message}</Typography>;
   }
 
   // Render the component
   return (
-    <TableContainer component={Paper}>
-      <Table aria-label="flight table">
-        <TableHead>
-          <TableRow>
-            <TableCell>Flight To</TableCell>
-            <TableCell align="right">Flight From</TableCell>
-            <TableCell align="right">Flight Date</TableCell>
-            <TableCell align="right">Return Date</TableCell>
-            <TableCell align="right">Action</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {flights.length > 0 ? (
-            // If there are flights, map over them and create a table row for each one
-            flights.map((flight) => (
-              <TableRow key={flight.id} hover>
-                <TableCell component="th" scope="row">{flight.destination}</TableCell>
-                <TableCell align="right">{flight.departure}</TableCell>
-                <TableCell align="right">{flight.flight_date}</TableCell>
-                <TableCell align="right">{flight.return_date}</TableCell>
-                <TableCell align="right">
-                  <Button variant="contained" color="primary" onClick={handleBookFlight}>
-                    Book Now
-                  </Button>
-                </TableCell>
-              </TableRow>
-            ))
-          ) : (
-            // If there are no flights, display a message
-            <TableRow>
-              <TableCell colSpan={5} align="center">No flights available at the moment.</TableCell>
-            </TableRow>
-          )}
-        </TableBody>
-      </Table>
-    </TableContainer>
+    <Grid container spacing={2}>
+      {flights.map(flight => (
+        <Grid item key={flight.id} xs={12} sm={6} md={4}>
+          <FlightCard
+            flight={flight}
+            onBookFlight={() => handleBookFlight(flight.id)} // This is the booking logic
+          />
+        </Grid>
+      ))}
+    </Grid>
   );
 }
 
