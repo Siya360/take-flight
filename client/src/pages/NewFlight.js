@@ -4,13 +4,35 @@ import { Button, TextField, Typography, Container, CircularProgress, Grid, MenuI
 import { createFlight } from '../utils/api';
 import { makeStyles } from '@material-ui/core/styles';
 
-// Define your custom styles
+// Custom styles
 const useStyles = makeStyles((theme) => ({
   inputField: {
     backgroundColor: 'white', // Set the background color for input fields
-    // Add other styles to enhance the look and feel
+    roundedLeft: {
+      '& .MuiOutlinedInput-root': {
+        borderTopLeftRadius: '4px',
+        borderBottomLeftRadius: '4px',
+        borderTopRightRadius: '0',
+        borderBottomRightRadius: '0',
+      },
+    },
+    rectangle: {
+      '& .MuiOutlinedInput-root': {
+        borderRadius: '0',
+      },
+    },
+    roundedRight: {
+      '& .MuiOutlinedInput-root': {
+        borderTopRightRadius: '4px',
+        borderBottomRightRadius: '4px',
+        borderTopLeftRadius: '0',
+        borderBottomLeftRadius: '0',
+      },
+    },
   },
-  // ... other styles
+  gridItem: {
+    padding: theme.spacing(0.5),// ... other styles
+  },
 }));
 
 const NewFlight = () => {
@@ -88,7 +110,7 @@ const NewFlight = () => {
           Search for Flights
         </Typography>
         <form onSubmit={handleSubmit} noValidate>
-          <Grid container spacing={2} alignItems="center">
+          <Grid container spacing={1} alignItems="center">
           <Grid item xs={12} md={3}>
             <TextField
               label="Enter Departure"
@@ -106,7 +128,7 @@ const NewFlight = () => {
               fullWidth
               value={destination}
               onChange={(e) => setDestination(e.target.value)}
-              className={classes.inputField}
+              className={`${classes.inputField} ${classes.roundedLeft}`}
             />
           </Grid>
           <Grid item xs={12} md={2}>
@@ -118,7 +140,7 @@ const NewFlight = () => {
               fullWidth
               value={flightDate}
               onChange={(e) => setFlightDate(e.target.value)}
-              className={classes.inputField}
+              className={`${classes.inputField} ${classes.roundedLeft}`}
             />
           </Grid>
           <Grid item xs={12} md={2}>
@@ -130,15 +152,31 @@ const NewFlight = () => {
               fullWidth
               value={returnDate}
               onChange={(e) => setReturnDate(e.target.value)}
-              className={classes.inputField}
+              className={`${classes.inputField} ${classes.roundedLeft}`}
             />
+          </Grid>
+          <Grid item xs={12} md={2}>
+            <TextField
+              select
+              label="Cabin Class"
+              value={cabinClass}
+              onChange={(e) => setCabinClass(e.target.value)}
+              className={`${classes.inputField} ${classes.roundedLeft}`}
+              variant="outlined"
+              fullWidth
+            >
+              <MenuItem value="Economy">Economy</MenuItem>
+              <MenuItem value="Premium Economy">Premium Economy</MenuItem>
+              <MenuItem value="Business">Business</MenuItem>
+              <MenuItem value="First Class">First Class</MenuItem>
+            </TextField>
           </Grid>
           <Grid item xs={12} sm={6} md={2}>
             <Button
                 aria-describedby={id}
                 variant="outlined"
                 onClick={handleTravellersClick}
-                className={classes.inputField}
+                className={`${classes.inputField} ${classes.roundedRight}`}
               >
                 Travellers
               </Button>
@@ -196,30 +234,14 @@ const NewFlight = () => {
               </Popover>
             </Grid>
           <Grid item xs={12} md={2}>
-            <TextField
-              select
-              label="Cabin Class"
-              value={cabinClass}
-              onChange={(e) => setCabinClass(e.target.value)}
-              className={classes.inputField}
-              variant="outlined"
-              fullWidth
-            >
-              <MenuItem value="Economy">Economy</MenuItem>
-              <MenuItem value="Premium Economy">Premium Economy</MenuItem>
-              <MenuItem value="Business">Business</MenuItem>
-              <MenuItem value="First Class">First Class</MenuItem>
-            </TextField>
-          </Grid>
-          <Grid item xs={12} md={2}>
             <Button
               type="submit"
               variant="contained"
-              color="primary"
+              color="secondary"
               fullWidth
               disabled={isLoading}
             >
-              {isLoading ? <CircularProgress size={24} /> : 'Search Flights'}
+              {isLoading ? <CircularProgress size={24} /> : 'Search'}
             </Button>
           </Grid>
         </Grid>
