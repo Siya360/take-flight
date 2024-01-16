@@ -1,23 +1,18 @@
-// Import necessary hooks and components from React, React Router, and Material UI
 import React, { useState, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import { Grid, Typography } from '@material-ui/core';
-import FlightCard from './FlightCard'; // Adjust the relative path as necessary
-// Import the fetchFlights function from the API utility
+import { Alert } from '@material-ui/lab';
+import FlightCard from './FlightCard';
 import { fetchFlights } from '../utils/api';
+import SortFlights from './SortFlights';
 
-// Define the FlightList component
 function FlightList() {
-  // Use the useHistory hook to allow for navigation
   const history = useHistory();
-  // Use the useState hook to manage the flights state
   const [flights, setFlights] = useState([]);
-
-// State variables for flight details
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [sortOption, setSortOption] = useState('Best');
 
-  // Use the useEffect hook to fetch flights when the component mounts
   useEffect(() => {
     fetchFlights()
       .then(data => {
@@ -35,28 +30,52 @@ function FlightList() {
     history.push(`/flight-details/${flightId}`);
   };
 
+  const handleSortChange = (option) => {
+    setSortOption(option);
+  };
+
+  const sortFlights = (flights, option) => {
+  // Create a copy of the flights array to avoid mutating the original
+  const sortedFlights = [...flights];
+  switch (option) {
+    case 'Price Low to High':
+      return sortedFlights.sort((a, b) => a.price - b.price);
+    case 'Price High to Low':
+      return sortedFlights.sort((a, b) => b.price - a.price);
+    case 'Duration Short to Long':
+      return sortedFlights.sort((a, b) => a.duration - b.duration);
+    case 'Duration Long to Short':
+      return sortedFlights.sort((a, b) => b.duration - a.duration);
+    default:
+      return sortedFlights; // If no valid option is provided, return the flights unsorted
+  }
+  };
+
+  const sortedFlights = sortFlights(flights, sortOption);
+
   if (isLoading) {
     return <Typography>Loading flights...</Typography>;
   }
 
   if (error) {
-    return <Typography>Error fetching flights: {error.message}</Typography>;
+    return <Alert severity="error">Error fetching flights: {error.message}</Alert>;
   }
 
-  // Render the component
   return (
-    <Grid container spacing={2}>
-      {flights.map(flight => (
-        <Grid item key={flight.id} xs={12} sm={6} md={4}>
-          <FlightCard
-            flight={flight}
-            onBookFlight={() => handleBookFlight(flight.id)} // This is the booking logic
-          />
-        </Grid>
-      ))}
-    </Grid>
+    <div>
+      <SortFlights onSort={handleSortChange} />
+      <Grid container spacing={2}>
+        {sortedFlights.map(flight => (
+          <Grid item key={flight.id} xs={12} sm={6} md={4}>
+            <FlightCard
+              flight={flight}
+              onBookFlight={() => handleBookFlight(flight.id)}
+            />
+          </Grid>
+        ))}
+      </Grid>
+    </div>
   );
 }
 
-// Export the FlightList component as the default export
 export default FlightList;
