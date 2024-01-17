@@ -1,8 +1,13 @@
 import React, { useState } from "react";
-import { Button, Error, Input, FormField, Label } from "../styles";
+import { signUpUser } from '../utils/api'; // Import the signUpUser function
 import PropTypes from 'prop-types';
+import FormField from '../styles/FormField';
+import Input from '../styles/Input';
+import Label from '../styles/Label';
+import Error from '../styles/Error';
+import Button from '../styles/Button';
 
-const SignUpForm = ({ onLogin }) => {
+const SignUpForm = ({ onSignUp }) => {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
@@ -14,37 +19,24 @@ const SignUpForm = ({ onLogin }) => {
   const [errors, setErrors] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
 
-  SignUpForm.propTypes = {
-    onLogin: PropTypes.func.isRequired,
-  };
+ // Define propTypes for SignUpForm
+ SignUpForm.propTypes = {
+  onSignUp: PropTypes.func.isRequired, // Validates that onSignUp prop is a function and is required
+};
 
   function handleSubmit(e) {
     e.preventDefault();
-    setErrors([]);
     setIsLoading(true);
-    fetch("http://127.0.0.1:3000/signup", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        first_name: firstName,
-        last_name: lastName,
-        email: email,
-        gender: gender,
-        age: age,
-        password: password,
-        password_confirmation: passwordConfirmation,
-
-      }),
-    }).then((r) => {
-      setIsLoading(false);
-      if (r.ok) {
-        r.json().then((user) => onLogin(user));
-      } else {
-        r.json().then((err) => setErrors(err.errors));
-      }
-    });
+    const userData = { firstName, lastName, email, gender, age, password, passwordConfirmation };
+    signUpUser(userData)
+      .then(user => {
+        setIsLoading(false);
+        onSignUp(user); // This might log the user in or redirect
+      })
+      .catch(err => {
+        setIsLoading(false);
+        setErrors([err.message]); // Adjust based on the error format
+      });
   }
 
   return (
@@ -132,5 +124,10 @@ const SignUpForm = ({ onLogin }) => {
     </form>
   );
 }
+
+// Define propTypes for SignUpForm
+SignUpForm.propTypes = {
+  onSignUp: PropTypes.func.isRequired, // Validates that onSignUp prop is a function and is required
+};
 
 export default SignUpForm;

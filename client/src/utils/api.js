@@ -47,3 +47,43 @@ export const createFlight = async (flightData) => {
     throw error;
   }
 };
+
+// Function to handle user login
+export const loginUser = async (loginData) => {
+  try {
+    const response = await fetch(`${BASE_URL}/login`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(loginData),
+    });
+    if (!response.ok) {
+      throw new Error('Login failed.');
+    }
+    return await response.json();
+  } catch (error) {
+    console.error('Error during login:', error);
+    throw error;
+  }
+};
+
+// Function to handle user sign-up
+export const signUpUser = async (signUpData) => {
+  try {
+    const response = await fetch(`${BASE_URL}/signup`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(signUpData),
+    });
+    if (!response.ok) {
+      throw new Error('Sign-up failed.');
+    }
+    return await response.json();
+  } catch (error) {
+    console.error('Error during sign-up:', error);
+    throw error;
+  }
+};

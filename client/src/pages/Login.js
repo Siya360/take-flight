@@ -1,15 +1,33 @@
 import { useState } from "react";
-import styled from "styled-components";
+import styled from "styled-components"; // Ensure this import is used
 import LoginForm from "../components/LoginForm";
 import SignUpForm from "../components/SignUpForm";
 import { Button } from "../styles";
-import PropTypes from 'prop-types';
+import { loginUser, signUpUser } from '../utils/api'; // Import API functions
 
-const Login = ({ onLogin }) => {
+const Login = () => {
   const [showLogin, setShowLogin] = useState(true);
 
-  Login.propTypes = {
-    onLogin: PropTypes.func.isRequired,
+  const handleLogin = async (loginData) => {
+    try {
+      const userData = await loginUser(loginData);
+      // Handle successful login (e.g., store user data, redirect, etc.)
+      console.log(userData); // Replace with actual login logic
+    } catch (error) {
+      console.error("Login failed:", error);
+      // Handle login errors (e.g., show error message)
+    }
+  };
+
+  const handleSignUp = async (signUpData) => {
+    try {
+      const userData = await signUpUser(signUpData);
+      // Handle successful sign-up (e.g., store user data, redirect, etc.)
+      console.log(userData); // Replace with actual sign-up logic
+    } catch (error) {
+      console.error("Sign-up failed:", error);
+      // Handle sign-up errors (e.g., show error message)
+    }
   };
 
   return (
@@ -17,7 +35,7 @@ const Login = ({ onLogin }) => {
       <Logo>Flight Booking</Logo>
       {showLogin ? (
         <>
-          <LoginForm onLogin={onLogin} />
+          <LoginForm onLogin={handleLogin} />
           <Divider />
           <p>
             Don't have an account? &nbsp;
@@ -28,7 +46,7 @@ const Login = ({ onLogin }) => {
         </>
       ) : (
         <>
-          <SignUpForm onLogin={onLogin} />
+          <SignUpForm onSignUp={handleSignUp} />
           <Divider />
           <p>
             Already have an account? &nbsp;
@@ -41,7 +59,7 @@ const Login = ({ onLogin }) => {
     </Wrapper>
   );
 }
-
+// Styled components
 const Logo = styled.h1`
   font-family: "Permanent Marker", cursive;
   font-size: 3rem;
