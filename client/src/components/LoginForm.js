@@ -1,6 +1,12 @@
 import React, { useState } from "react";
-import { Button, Error, Input, FormField, Label } from "../styles";
+import { loginUser } from '../utils/api'; // Import the loginUser function
 import PropTypes from 'prop-types';
+import FormField from '../styles/FormField';
+import Input from '../styles/Input';
+import Label from '../styles/Label';
+import Error from '../styles/Error';
+import Button from '../styles/Button';
+
 
 const LoginForm = ({ onLogin }) => {
   const [email, setEmail] = useState("");
@@ -8,6 +14,7 @@ const LoginForm = ({ onLogin }) => {
   const [errors, setErrors] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
 
+  // Define propTypes
   LoginForm.propTypes = {
     onLogin: PropTypes.func.isRequired,
   };
@@ -15,20 +22,15 @@ const LoginForm = ({ onLogin }) => {
   function handleSubmit(e) {
     e.preventDefault();
     setIsLoading(true);
-    fetch("http://127.0.0.1:3000/login", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ email, password }),
-    }).then((r) => {
-      setIsLoading(false);
-      if (r.ok) {
-        r.json().then((user) => onLogin(user));
-      } else {
-        r.json().then((err) => setErrors(err.error));
-      }
-    });
+    loginUser({ email, password })
+      .then(user => {
+        setIsLoading(false);
+        onLogin(user);
+      })
+      .catch(err => {
+        setIsLoading(false);
+        setErrors([err.message]);
+      });
   }
 
   return (
@@ -58,13 +60,19 @@ const LoginForm = ({ onLogin }) => {
           {isLoading ? "Loading..." : "Login"}
         </Button>
       </FormField>
-      <FormField>
-        {errors.map((err) => (
-          <Error key={err}>{err}</Error>
-        ))}
-      </FormField>
+      {errors.length > 0 && (
+  <FormField>
+    {errors.map((err, index) => (
+      // If error strings are unique
+      <Error key={err}>{err}</Error>
+      // If not unique, consider another method to generate a unique key
+    ))}
+  </FormField>
+)}
+
     </form>
   );
 }
 
 export default LoginForm;
+
