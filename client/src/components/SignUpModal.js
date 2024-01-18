@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import Modal from '@material-ui/core/Modal';
 import SignUpForm from './SignUpForm';
@@ -31,26 +31,33 @@ const useStyles = makeStyles((theme) => ({
 function SignUpModal({ open, onClose, onSignUp }) {
   const classes = useStyles();
   // getModalStyle is not a pure function, we roll the style only on the first render
-  const [modalStyle] = React.useState(getModalStyle);
+  const [modalStyle, setModalStyle] = useState(getModalStyle);
+
+  // Update modal style when 'open' changes
+  useEffect(() => {
+    if (open) {
+      setModalStyle(getModalStyle());
+    }
+  }, [open]);
 
   return (
     <Modal
       open={open}
       onClose={onClose}
       aria-labelledby="sign-up-modal-title"
-aria-describedby="sign-up-modal-description"
->
-<div style={modalStyle} className={classes.paper}>
-<SignUpForm onSignUp={onSignUp} />
-</div>
-</Modal>
-);
+      aria-describedby="sign-up-modal-description"
+    >
+      <div style={modalStyle} className={classes.paper}>
+        <SignUpForm onSignUp={onSignUp} />
+      </div>
+    </Modal>
+  );
 }
 
 SignUpModal.propTypes = {
-open: PropTypes.bool.isRequired,
-onClose: PropTypes.func.isRequired,
-onSignUp: PropTypes.func.isRequired,
+  open: PropTypes.bool.isRequired,
+  onClose: PropTypes.func.isRequired,
+  onSignUp: PropTypes.func.isRequired,
 };
 
 export default SignUpModal;
