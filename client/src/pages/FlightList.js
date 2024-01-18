@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
-import { Grid, Typography } from '@material-ui/core';
+import { Grid, Typography, Button } from '@material-ui/core';
 import { Alert } from '@material-ui/lab';
 import FlightCard from './FlightCard';
 import { fetchFlights } from '../utils/api';
@@ -12,6 +12,7 @@ function FlightList() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [sortOption, setSortOption] = useState('Best');
+  const [visibleFlightsCount, setVisibleFlightsCount] = useState(10); // For client-side pagination
 
   useEffect(() => {
     fetchFlights()
@@ -35,23 +36,26 @@ function FlightList() {
   };
 
   const sortFlights = (flights, option) => {
-  // Create a copy of the flights array to avoid mutating the original
-  const sortedFlights = [...flights];
-  switch (option) {
-    case 'Price Low to High':
-      return sortedFlights.sort((a, b) => a.price - b.price);
-    case 'Price High to Low':
-      return sortedFlights.sort((a, b) => b.price - a.price);
-    case 'Duration Short to Long':
-      return sortedFlights.sort((a, b) => a.duration - b.duration);
-    case 'Duration Long to Short':
-      return sortedFlights.sort((a, b) => b.duration - a.duration);
-    default:
-      return sortedFlights; // If no valid option is provided, return the flights unsorted
-  }
+    const sortedFlights = [...flights];
+    switch (option) {
+      case 'Price Low to High':
+        return sortedFlights.sort((a, b) => a.price - b.price);
+      case 'Price High to Low':
+        return sortedFlights.sort((a, b) => b.price - a.price);
+      case 'Duration Short to Long':
+        return sortedFlights.sort((a, b) => a.duration - b.duration);
+      case 'Duration Long to Short':
+        return sortedFlights.sort((a, b) => b.duration - a.duration);
+      default:
+        return sortedFlights; // If no valid option is provided, return the flights unsorted
+    }
   };
 
-  const sortedFlights = sortFlights(flights, sortOption);
+  const loadMoreFlights = () => {
+    setVisibleFlightsCount(currentCount => currentCount + 5);
+  };
+
+  const displayedFlights = sortFlights(flights.slice(0, visibleFlightsCount), sortOption);
 
   if (isLoading) {
     return <Typography>Loading flights...</Typography>;
@@ -65,7 +69,7 @@ function FlightList() {
     <div>
       <SortFlights onSort={handleSortChange} />
       <Grid container spacing={2}>
-        {sortedFlights.map(flight => (
+        {displayedFlights.map(flight => (
           <Grid item key={flight.id} xs={12} sm={6} md={4}>
             <FlightCard
               flight={flight}
@@ -74,6 +78,9 @@ function FlightList() {
           </Grid>
         ))}
       </Grid>
+      {visibleFlightsCount < flights.length && (
+        <Button onClick={loadMoreFlights}>Load More</Button>
+      )}
     </div>
   );
 }
