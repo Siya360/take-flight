@@ -1,15 +1,16 @@
 import React from 'react';
-import PropTypes from 'prop-types'; // Import PropTypes
-import { Link } from 'react-router-dom';
-import { AppBar, Toolbar, Typography, Button } from '@material-ui/core';
+import PropTypes from 'prop-types';
+import { Link as RouterLink } from 'react-router-dom';
+import { AppBar, Toolbar, Typography, Button } from '@mui/material';
 function NavBar({ onLoginClick, onSignUpClick }) {
   return (
     <AppBar position="static">
       <Toolbar>
-        <Typography variant="h6" style={{ flexGrow: 1 }}>
-          <Link to="/" style={{ color: 'inherit', textDecoration: 'none' }}>
+        <Typography variant="h6" sx={{ flexGrow: 1 }}>
+          {/* Use RouterLink as the component for MUI Link */}
+          <Button component={RouterLink} to="/" sx={{ color: 'inherit', textDecoration: 'none' }}>
             TakeFlight
-          </Link>
+          </Button>
         </Typography>
         <Button color="inherit" onClick={onLoginClick}>
           Login
@@ -22,12 +23,9 @@ function NavBar({ onLoginClick, onSignUpClick }) {
   );
 }
 
-// Define PropTypes for NavBar
 NavBar.propTypes = {
   onLoginClick: PropTypes.func.isRequired,
   onSignUpClick: PropTypes.func.isRequired,
 };
 
 export default NavBar;
-
-

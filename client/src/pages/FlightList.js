@@ -1,13 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { useHistory } from 'react-router-dom';
-import { Grid, Typography, Button } from '@material-ui/core';
-import { Alert } from '@material-ui/lab';
+import { useNavigate } from 'react-router-dom';
+import { Grid, Container, Typography, Button, Alert } from '@mui/material';
 import FlightCard from './FlightCard';
 import { fetchFlights } from '../utils/api';
 import SortFlights from './SortFlights';
 
 function FlightList() {
-  const history = useHistory();
+  const navigate = useNavigate();
   const [flights, setFlights] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -27,8 +26,7 @@ function FlightList() {
   }, []);
 
   const handleBookFlight = (flightId) => {
-    console.log('Book flight:', flightId);
-    history.push(`/flight-details/${flightId}`);
+    navigate(`/flight-details/${flightId}`);
   };
 
   const handleSortChange = (option) => {
@@ -47,7 +45,7 @@ function FlightList() {
       case 'Duration Long to Short':
         return sortedFlights.sort((a, b) => b.duration - a.duration);
       default:
-        return sortedFlights; // If no valid option is provided, return the flights unsorted
+        return sortedFlights;
     }
   };
 
@@ -66,7 +64,7 @@ function FlightList() {
   }
 
   return (
-    <div>
+    <Container>
       <SortFlights onSort={handleSortChange} />
       <Grid container spacing={2}>
         {displayedFlights.map(flight => (
@@ -81,7 +79,7 @@ function FlightList() {
       {visibleFlightsCount < flights.length && (
         <Button onClick={loadMoreFlights}>Load More</Button>
       )}
-    </div>
+    </Container>
   );
 }
 

@@ -1,31 +1,26 @@
 import React from 'react';
-import Modal from '@material-ui/core/Modal';
+import { Modal, Box } from '@mui/material';
 import LoginForm from './LoginForm';
 
-// Function for styling 
 function getModalStyle() {
-  const top = 50;
-  const left = 50;
-
   return {
     position: 'absolute',
-    top: `${top}%`,
-    left: `${left}%`,
-    transform: `translate(-${top}%, -${left}%)`,
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
     width: 400,
-    backgroundColor: 'white',
-    padding: '16px 32px 24px',
+    bgcolor: 'background.paper',
+    boxShadow: 24,
+    p: 4, // padding shorthand
   };
 }
 
 function LoginModal({ open, onClose, onLogin }) {
-  const [modalStyle] = React.useState(getModalStyle);
-
   return (
     <Modal open={open} onClose={onClose}>
-      <div style={modalStyle}>
+      <Box sx={getModalStyle()}>
         <LoginForm onLogin={onLogin} />
-      </div>
+      </Box>
     </Modal>
   );
 }

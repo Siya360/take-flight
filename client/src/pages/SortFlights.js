@@ -1,8 +1,6 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import Button from '@material-ui/core/Button';
-import Menu from '@material-ui/core/Menu';
-import MenuItem from '@material-ui/core/MenuItem';
+import { Button, Menu, MenuItem } from '@mui/material';
 
 function SortFlights({ onSort }) {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -42,6 +40,7 @@ function SortFlights({ onSort }) {
     </div>
   );
 }
+
 // Define PropTypes
 SortFlights.propTypes = {
   onSort: PropTypes.func.isRequired,
