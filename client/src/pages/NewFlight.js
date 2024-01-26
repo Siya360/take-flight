@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button, Typography, Container, Paper, CircularProgress, Box, Popover, Grid, TextField, MenuItem } from '@mui/material';
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
@@ -76,6 +76,8 @@ const CustomTextField = styled(TextField)(({ theme }) => ({
   const [children, setChildren] = useState(0);
   const [infants, setInfants] = useState(0);
 
+  const MAX_PASSENGERS = 9; // Maximum number of passengers allowed
+
   // Define the `id` for the popover
   const id = 'simple-popover';
   const openTravellers = Boolean(travellersAnchorEl); // This should be a boolean value based on your `travellersAnchorEl`
@@ -98,6 +100,42 @@ const handleReturnDateChange = (date) => {
   setSelectedReturnDate(date); // Update the state for the UI display
   setReturnDate(date); // Update the state for form submission or backend logic
 };
+
+// Event Handler for Adults Count Input
+// Validates and updates the number of adult passengers
+const handleAdultsChange = (e) => {
+  const newAdults = Number(e.target.value);
+  if (newAdults >= 1 && newAdults + children + infants <= MAX_PASSENGERS) {
+    setAdults(newAdults);
+  }
+};
+
+// Event Handler for Children Count Input
+// Validates and updates the number of child passengers
+const handleChildrenChange = (e) => {
+  const newChildren = Number(e.target.value);
+  if (newChildren >= 0 && adults >= newChildren && adults + newChildren + infants <= MAX_PASSENGERS) {
+    setChildren(newChildren);
+  }
+};
+
+// Event Handler for Infants Count Input
+// Validates and updates the number of infant passengers
+const handleInfantsChange = (e) => {
+  const newInfants = Number(e.target.value);
+  if (newInfants >= 0 && adults >= newInfants && adults + children + newInfants <= MAX_PASSENGERS) {
+    setInfants(newInfants);
+  }
+};
+
+// Add a useEffect to enforce any rules when state changes, if needed
+useEffect(() => {
+  // For example, adjust children and infants if adults are reduced
+  if (adults < children + infants) {
+    setChildren(0);
+    setInfants(0);
+  }
+}, [adults, children, infants]);
 
   // Function to handle form submission
   const handleSubmit = async (event) => {
@@ -176,7 +214,7 @@ const handleReturnDateChange = (date) => {
                 <CustomDatePicker
                   disableToolbar
                   variant="inline"
-                  format="MM/dd/yyyy"
+                  format="yyyy-MM-dd"
                   margin="normal"
                   id="departure-date-picker"
                   label="Departure Date"
@@ -190,7 +228,7 @@ const handleReturnDateChange = (date) => {
                 <CustomDatePicker
                   disableToolbar
                   variant="inline"
-                  format="MM/dd/yyyy"
+                  format="yyyy-MM-dd"
                   margin="normal"
                   id="return-date-picker"
                   label="Return Date"
@@ -256,44 +294,46 @@ const handleReturnDateChange = (date) => {
       horizontal: 'center', // Popover animates from the center
     }}
   >
-    <Box p={2}>
-      <CustomGridItem container spacing={1}>
-        {/* Input fields for specifying the number of adults, children, and infants */}
-        <CustomGridItem item xs={12} sm={6} md={2}>
-          <CustomTextField
-            label="Adults (16+)"
-            type="number"
-            InputProps={{ inputProps: { min: 1, max: 9 } }} // Sets the min and max values
-            variant="outlined"
-            fullWidth
-            value={adults}
-            onChange={(e) => setAdults(Number(e.target.value))} // Updates the adults state
-          />
-        </CustomGridItem>
-        <CustomGridItem item xs={12} sm={6} md={2}>
-          <CustomTextField
-            label="Children (2-15)"
-            type="number"
-            InputProps={{ inputProps: { min: 0, max: 9 } }} // Sets the min and max values
-            variant="outlined"
-            fullWidth
-            value={children}
-            onChange={(e) => setChildren(Number(e.target.value))} // Updates the children state
-          />
-        </CustomGridItem>
-        <CustomGridItem item xs={12}>
-          <CustomTextField
-            label="Infants (Under 2)"
-            type="number"
-            InputProps={{ inputProps: { min: 0, max: 9 } }} // Sets the min and max values
-            variant="outlined"
-            fullWidth
-            value={infants}
-            onChange={(e) => setInfants(Number(e.target.value))} // Updates the infants state
-          />
-        </CustomGridItem>
-      </CustomGridItem>
-    </Box>
+  <Box p={2}>
+  <CustomGridItem container spacing={2} direction="column"> {/* Set direction to column */}
+    {/* Input field for specifying the number of adults */}
+    <CustomGridItem item xs={12}>
+      <CustomTextField
+        label="Adults (16+)"
+        type="number"
+        InputProps={{ inputProps: { min: 1, max: 9 } }}
+        variant="outlined"
+        fullWidth
+        value={adults}
+        onChange={handleAdultsChange}
+      />
+    </CustomGridItem>
+    {/* Input field for specifying the number of children */}
+    <CustomGridItem item xs={12}>
+      <CustomTextField
+        label="Children (2-15)"
+        type="number"
+        InputProps={{ inputProps: { min: 0, max: 9 } }}
+        variant="outlined"
+        fullWidth
+        value={children}
+        onChange={handleChildrenChange}
+      />
+    </CustomGridItem>
+    {/* Input field for specifying the number of infants */}
+    <CustomGridItem item xs={12}>
+      <CustomTextField
+        label="Infants (Under 2)"
+        type="number"
+        InputProps={{ inputProps: { min: 0, max: 9 } }}
+        variant="outlined"
+        fullWidth
+        value={infants}
+        onChange={handleInfantsChange}
+      />
+    </CustomGridItem>
+  </CustomGridItem>
+</Box>
   </Popover>
 </CustomGridItem>
 <CustomGridItem item xs={12} md={2}>
