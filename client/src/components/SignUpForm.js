@@ -1,11 +1,7 @@
 import React, { useState } from "react";
-import { signUpUser } from '../utils/api'; // Import the signUpUser function
+import { signUpUser } from '../utils/api';
 import PropTypes from 'prop-types';
-import FormField from '../styles/FormField';
-import Input from '../styles/Input';
-import Label from '../styles/Label';
-import Error from '../styles/Error';
-import Button from '../styles/Button';
+import { TextField, Button, Box, Typography, CircularProgress } from '@mui/material';
 
 const SignUpForm = ({ onSignUp }) => {
   const [firstName, setFirstName] = useState("");
@@ -15,14 +11,8 @@ const SignUpForm = ({ onSignUp }) => {
   const [age, setAge] = useState("");
   const [password, setPassword] = useState("");
   const [passwordConfirmation, setPasswordConfirmation] = useState("");
-
   const [errors, setErrors] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
-
- // Define propTypes for SignUpForm
- SignUpForm.propTypes = {
-  onSignUp: PropTypes.func.isRequired, // Validates that onSignUp prop is a function and is required
-};
 
   function handleSubmit(e) {
     e.preventDefault();
@@ -31,103 +21,89 @@ const SignUpForm = ({ onSignUp }) => {
     signUpUser(userData)
       .then(user => {
         setIsLoading(false);
-        onSignUp(user); // This might log the user in or redirect
+        onSignUp(user);
       })
       .catch(err => {
         setIsLoading(false);
-        setErrors([err.message]); // Adjust based on the error format
+        setErrors([...errors, err.message]);
       });
   }
 
   return (
     <form onSubmit={handleSubmit}>
-      <FormField>
-        <Label htmlFor="username">First Name</Label>
-        <Input
-          type="text"
-          id="username"
-          autoComplete="off"
-          value={firstName}
+      <Box mb={2}>
+        <TextField 
+          label="First Name" 
+          type="text" 
+          fullWidth 
+          value={firstName} 
           onChange={(e) => setFirstName(e.target.value)}
         />
-      </FormField>
-      <FormField>
-        <Label htmlFor="lastName">Last Name</Label>
-        <Input
-          type="text"
-          id="lastName"
-          value={lastName}
+        <TextField 
+          label="Last Name" 
+          type="text" 
+          fullWidth 
+          value={lastName} 
           onChange={(e) => setLastName(e.target.value)}
-          autoComplete="current-password"
         />
-      </FormField>
-      <FormField>
-        <Label htmlFor="email">Email</Label>
-        <Input
-          type="text"
-          id="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          autoComplete="current-password"
+        <TextField 
+          label="Age" 
+          type="text" 
+          fullWidth 
+          value={age} 
+          onChange={(e) => setAge(e.target.value)}
         />
-      </FormField>
-      <FormField>
-        <Label htmlFor="gender">Gender</Label>
-        <Input
+        <TextField
+          label="Gender"
           type="text"
-          id="gender"
+          fullWidth
           value={gender}
           onChange={(e) => setGender(e.target.value)}
-          autoComplete="current-password"
         />
-      </FormField>
-      <FormField>
-        <Label htmlFor="age">Age</Label>
-        <Input
-          type="number"
-          id="age"
-          value={age}
-          onChange={(e) => setAge(e.target.value)}
-          autoComplete="current-password"
+        <TextField 
+          label="Email" 
+          type="text" 
+          fullWidth 
+          value={email} 
+          onChange={(e) => setEmail(e.target.value)}
         />
-      </FormField>
-      <FormField>
-        <Label htmlFor="password">Password</Label>
-        <Input
-          type="password"
-          id="password"
-          value={password}
+        <TextField 
+          label="Password" 
+          type="text" 
+          fullWidth 
+          value={password} 
           onChange={(e) => setPassword(e.target.value)}
-          autoComplete="current-password"
         />
-      </FormField>
-      <FormField>
-        <Label htmlFor="password">Password Confirmation</Label>
-        <Input
-          type="password"
-          id="password_confirmation"
-          value={passwordConfirmation}
+        <TextField 
+          label="Password Confirmation" 
+          type="text" 
+          fullWidth 
+          value={passwordConfirmation} 
           onChange={(e) => setPasswordConfirmation(e.target.value)}
-          autoComplete="current-password"
         />
-      </FormField>
-      
-  
-      <FormField>
-        <Button type="submit">{isLoading ? "Loading..." : "Sign Up"}</Button>
-      </FormField>
-      <FormField>
-        {errors.map((err) => (
-          <Error key={err}>{err}</Error>
-        ))}
-      </FormField>
+      </Box>
+      <Button 
+        variant="contained" 
+        color="primary" 
+        type="submit" 
+        disabled={isLoading}
+        fullWidth
+      >
+        {isLoading ? <CircularProgress size={24} /> : "Sign Up"}
+      </Button>
+      {errors.length > 0 && (
+        <Box mt={2}>
+          {errors.map((err, index) => (
+            <Typography color="error" key={index}>{err}</Typography>
+          ))}
+        </Box>
+      )}
     </form>
   );
 }
 
-// Define propTypes for SignUpForm
 SignUpForm.propTypes = {
-  onSignUp: PropTypes.func.isRequired, // Validates that onSignUp prop is a function and is required
+  onSignUp: PropTypes.func.isRequired,
 };
 
 export default SignUpForm;

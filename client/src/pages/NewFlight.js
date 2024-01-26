@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { Button, Typography, Container, Paper, CircularProgress, Box, Popover, Grid, TextField, MenuItem } from '@mui/material';
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterLuxon } from '@mui/x-date-pickers/AdapterLuxon';
@@ -53,8 +53,8 @@ const CustomTextField = styled(TextField)(({ theme }) => ({
   }));
   
 
-const NewFlight = () => {
-  const history = useHistory();
+  const NewFlight = () => {
+    const navigate = useNavigate();
 
   // State variables for flight details
   const [destination, setDestination] = useState('');
@@ -122,7 +122,7 @@ const handleReturnDateChange = (date) => {
       // Use the createFlight API utility to send the flight data
       const result = await createFlight(flightData);
       console.log(result); // Log the result or handle as needed
-      history.push('/flights'); // Navigate to the flight list on success
+      navigate('/flights'); // Navigate to the flight list on success
     } catch (error) {
       console.error('There was an error submitting the flight data:', error);
       // Handle the error appropriately in your UI
@@ -184,9 +184,7 @@ const handleReturnDateChange = (date) => {
                   onChange={handleDepartureDateChange}
                   renderInput={(params) => <CustomTextField {...params} />}
                 />
-
               </CustomGridItem>
-  
               <CustomGridItem item xs={12} md={3}>
                 {/* Return date picker component */}
                 <CustomDatePicker
@@ -210,18 +208,18 @@ const handleReturnDateChange = (date) => {
                 <CustomGridItem item xs={12} md={2}>
                 {/* Dropdown select for cabin class */}
                 <CustomTextField
-    select
-    label="Cabin Class"
-    value={cabinClass}
-    onChange={(e) => setCabinClass(e.target.value)}
-    variant="outlined"
-    fullWidth
-    SelectProps={{
-      displayEmpty: true,
-      renderValue: (value) => {
-        if (value) {
-          return value;
-        }
+                select
+                label="Cabin Class"
+                value={cabinClass}
+                onChange={(e) => setCabinClass(e.target.value)}
+                variant="outlined"
+                fullWidth
+                SelectProps={{
+                displayEmpty: true,
+                renderValue: (value) => {
+                if (value) {
+              return value;
+            }
         return <em>Cabin Class</em>;
       },
     }}

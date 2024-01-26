@@ -1,9 +1,9 @@
 import { useState } from "react";
-import styled from "styled-components"; // Ensure this import is used
+import { styled } from '@mui/material/styles';
 import LoginForm from "../components/LoginForm";
 import SignUpForm from "../components/SignUpForm";
-import { Button } from "../styles";
-import { loginUser, signUpUser } from '../utils/api'; // Import API functions
+import { Button, Typography, Divider, Box } from '@mui/material';
+import { loginUser, signUpUser } from '../utils/api';
 
 const Login = () => {
   const [showLogin, setShowLogin] = useState(true);
@@ -32,51 +32,44 @@ const Login = () => {
 
   return (
     <Wrapper>
-      <Logo>Flight Booking</Logo>
+      <Typography variant="h3" component="h1" gutterBottom>
+        Flight Booking
+      </Typography>
       {showLogin ? (
         <>
           <LoginForm onLogin={handleLogin} />
-          <Divider />
-          <p>
+          <StyledDivider />
+          <Typography>
             Don't have an account? &nbsp;
             <Button color="secondary" onClick={() => setShowLogin(false)}>
               Sign Up
             </Button>
-          </p>
+          </Typography>
         </>
       ) : (
         <>
           <SignUpForm onSignUp={handleSignUp} />
-          <Divider />
-          <p>
+          <StyledDivider />
+          <Typography>
             Already have an account? &nbsp;
             <Button color="secondary" onClick={() => setShowLogin(true)}>
               Log In
             </Button>
-          </p>
+          </Typography>
         </>
       )}
     </Wrapper>
   );
 }
-// Styled components
-const Logo = styled.h1`
-  font-family: "Permanent Marker", cursive;
-  font-size: 3rem;
-  color: deeppink;
-  margin: 8px 0 16px;
-`;
+// Styled components using MUI's styled
+const Wrapper = styled(Box)(({ theme }) => ({
+  maxWidth: '500px',
+  margin: '40px auto',
+  padding: '16px',
+}));
 
-const Wrapper = styled.section`
-  max-width: 500px;
-  margin: 40px auto;
-  padding: 16px;
-`;
-
-const Divider = styled.hr`
-  border: none;
-  border-bottom: 1px solid #ccc;
-  margin: 16px 0;
-`;
+const StyledDivider = styled(Divider)(({ theme }) => ({
+  margin: theme.spacing(2, 0),
+}));
 
 export default Login;

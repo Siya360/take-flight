@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Switch, Route } from 'react-router-dom';
+import { Routes, Route } from 'react-router-dom'; // Update import
 import NavBar from './NavBar';
 import FlightList from '../pages/FlightList';
 import NewFlight from '../pages/NewFlight';
@@ -30,26 +30,18 @@ function App() {
         onSignUpClick={handleSignUpModalOpen}
       />
       <main>
-        <Switch>
-          <Route exact path="/">
-            <NewFlight />
-          </Route>
-          <Route path="/flights">
-            <FlightList />
-          </Route>
-          <Route path="/flight-details/:id">
-            <FlightDetails />
-          </Route>
-          <Route path="*">
-            <NewFlight />
-          </Route>
-        </Switch>
+        <Routes> {/* Replace Switch with Routes */}
+          <Route path="/" element={<NewFlight />} /> {/* Update Route syntax */}
+          <Route path="/flights" element={<FlightList />} />
+          <Route path="/flight-details/:id" element={<FlightDetails />} />
+          <Route path="*" element={<NewFlight />} /> {/* Catch-all route */}
+        </Routes>
       </main>
       <LoginModal open={loginModalOpen} onClose={handleLoginModalClose} />
       <SignUpModal 
         open={signUpModalOpen} 
         onClose={handleSignUpModalClose} 
-        onSignUp={handleSignUp} // Passing the handleSignUp function
+        onSignUp={handleSignUp}
       />
     </ThemeProvider>
   );

@@ -1,12 +1,7 @@
 import React, { useState } from "react";
-import { loginUser } from '../utils/api'; // Import the loginUser function
+import { loginUser } from '../utils/api';
 import PropTypes from 'prop-types';
-import FormField from '../styles/FormField';
-import Input from '../styles/Input';
-import Label from '../styles/Label';
-import Error from '../styles/Error';
-import Button from '../styles/Button';
-
+import { TextField, Button, Box, Typography, CircularProgress } from '@mui/material';
 
 const LoginForm = ({ onLogin }) => {
   const [email, setEmail] = useState("");
@@ -35,44 +30,44 @@ const LoginForm = ({ onLogin }) => {
 
   return (
     <form onSubmit={handleSubmit}>
-      <FormField>
-        <Label htmlFor="email">Email</Label>
-        <Input
+      <Box mb={2}>
+        <TextField
+          label="Email"
           type="text"
-          id="email"
+          fullWidth
           autoComplete="off"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
         />
-      </FormField>
-      <FormField>
-        <Label htmlFor="password">Password</Label>
-        <Input
+      </Box>
+      <Box mb={2}>
+        <TextField
+          label="Password"
           type="password"
-          id="password"
+          fullWidth
           autoComplete="current-password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
-      </FormField>
-      <FormField>
-        <Button variant="fill" color="primary" type="submit">
-          {isLoading ? "Loading..." : "Login"}
-        </Button>
-      </FormField>
+      </Box>
+      <Button
+        variant="contained"
+        color="primary"
+        type="submit"
+        disabled={isLoading}
+        fullWidth
+      >
+        {isLoading ? <CircularProgress size={24} /> : "Login"}
+      </Button>
       {errors.length > 0 && (
-  <FormField>
-    {errors.map((err, index) => (
-      // If error strings are unique
-      <Error key={err}>{err}</Error>
-      // If not unique, consider another method to generate a unique key
-    ))}
-  </FormField>
-)}
-
+        <Box mt={2}>
+          {errors.map((err, index) => (
+            <Typography color="error" key={index}>{err}</Typography>
+          ))}
+        </Box>
+      )}
     </form>
   );
 }
 
 export default LoginForm;
-
