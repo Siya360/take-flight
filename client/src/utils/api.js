@@ -87,3 +87,18 @@ export const signUpUser = async (signUpData) => {
     throw error;
   }
 };
+
+// Function to handle the pagination or to fetch more flights
+export const pollFlights = async (pageNumber, itemsPerPage) => {
+  try {
+    const response = await fetch(`${BASE_URL}/flights?page=${pageNumber}&limit=${itemsPerPage}`);
+    if (!response.ok) {
+      throw new Error('Network response was not ok.');
+    }
+    return await response.json();
+  } catch (error) {
+    console.error('Error polling flights:', error);
+    throw error;
+  }
+};
+

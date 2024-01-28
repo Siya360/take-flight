@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Grid, Container, Typography, Button, Alert } from '@mui/material';
 import FlightCard from './FlightCard';
-import { fetchFlights } from '../utils/api';
 import SortFlights from './SortFlights';
+import { fetchFlights, pollFlights } from '../utils/api'; // From pollFlights function for the /poll endpoint
 
 function FlightList() {
   const navigate = useNavigate();
@@ -11,19 +11,68 @@ function FlightList() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [sortOption, setSortOption] = useState('Best');
-  const [visibleFlightsCount, setVisibleFlightsCount] = useState(10); // For client-side pagination
+  const [currentPage, setCurrentPage] = useState(1); // State for current page
+  const itemsPerPage = 16; // Define how many items you want per page
+  const [totalPages, setTotalPages] = useState(0); // State for total pages
+  const [flightsCache, setFlightsCache] = useState({}); // Object with pageNumber as key and flights data as value
+  
+    useEffect(() => {
+      const loadFlights = async () => {
+        setIsLoading(true);
+  
+        // Check if the current page flights are in cache
+        if (flightsCache[currentPage]) {
+          // Use cached flights data
+          setFlights(flightsCache[currentPage]);
+          setIsLoading(false);
+        } else {
+          // Fetch flights as they are not in cache
+          try {
+            const data = await fetchFlights(currentPage, itemsPerPage);
+            setFlights(data.flights);
+            setTotalPages(data.totalPages); // Set total pages based on response
 
-  useEffect(() => {
-    fetchFlights()
-      .then(data => {
-        setFlights(data);
-        setIsLoading(false);
-      })
-      .catch(err => {
-        setError(err);
-        setIsLoading(false);
-      });
-  }, []);
+            // Update cache with newly fetched flights
+            setFlightsCache(prevCache => ({
+              ...prevCache,
+              [currentPage]: data.flights
+            }));
+          } catch (err) {
+            setError(err);
+          }
+          setIsLoading(false);
+        }
+      };
+  
+      loadFlights();
+    
+      // WebSocket for real-time updates
+      const ws = new WebSocket('wss://your-websocket-url');
+
+      ws.onmessage = (event) => {
+        const message = JSON.parse(event.data);
+        // Assuming message contains the updated flight data
+        updateFlightData(message.updatedFlight);
+      };
+  
+      return () => {
+        ws.close();
+      };
+    }, [currentPage, itemsPerPage, flightsCache]); // Add any additional dependencies if needed
+  
+    const updateFlightData = (updatedFlight) => {
+      setFlights(prevFlights => prevFlights.map(flight => 
+        flight.id === updatedFlight.id ? updatedFlight : flight
+      ));
+    };
+
+  const loadMoreFlights = async () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(currentPage + 1);
+      const moreFlights = await pollFlights(currentPage + 1, itemsPerPage);
+      setFlights([...flights, ...moreFlights]); // Append new flights to the existing list
+    }
+  };
 
   const handleBookFlight = (flightId) => {
     navigate(`/flight-details/${flightId}`);
@@ -49,11 +98,7 @@ function FlightList() {
     }
   };
 
-  const loadMoreFlights = () => {
-    setVisibleFlightsCount(currentCount => currentCount + 5);
-  };
-
-  const displayedFlights = sortFlights(flights.slice(0, visibleFlightsCount), sortOption);
+  const displayedFlights = sortFlights(flights.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage), sortOption);
 
   if (isLoading) {
     return <Typography>Loading flights...</Typography>;
@@ -76,7 +121,7 @@ function FlightList() {
           </Grid>
         ))}
       </Grid>
-      {visibleFlightsCount < flights.length && (
+      {currentPage < totalPages && (
         <Button onClick={loadMoreFlights}>Load More</Button>
       )}
     </Container>
