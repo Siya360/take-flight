@@ -1,6 +1,14 @@
-const BASE_URL = process.env.REACT_APP_API_BASE_URL;
+// import to use websocket to send message to server
+import { connectWebSocket, sendMessage, closeWebSocket } from './websocket';
 
-// Existing imports and functions
+const BASE_URL = process.env.REACT_APP_API_BASE_URL;
+const API_KEY = process.env.REACT_APP_API_KEY;
+
+// Use this header configuration in all the fetch calls that need the API key
+const headers = {
+  'Content-Type': 'application/json',
+  'x-api-key': API_KEY, // Include the API key in the request header
+};
 
 // Function to fetch details of a specific flight
 export const fetchFlightDetails = async (flightId) => {
@@ -16,16 +24,20 @@ export const fetchFlightDetails = async (flightId) => {
   }
 };
 
+// Example function to fetch flights with the API key
 export const fetchFlights = async () => {
   try {
-    const response = await fetch(`${BASE_URL}/flights`);
+    const response = await fetch(`${BASE_URL}/flights`, {
+      method: 'GET',
+      headers: headers,
+    });
     if (!response.ok) {
       throw new Error('Network response was not ok.');
     }
     return await response.json();
   } catch (error) {
     console.error('Error fetching flights:', error);
-    throw error; // Re-throw to handle it in the calling component
+    throw error;
   }
 };
 
@@ -101,4 +113,6 @@ export const pollFlights = async (pageNumber, itemsPerPage) => {
     throw error;
   }
 };
+
+export { connectWebSocket, sendMessage, closeWebSocket };
 
