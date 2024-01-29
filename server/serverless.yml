@@ -7,9 +7,8 @@ provider:
   region: us-east-1
   environment:
     NODE_ENV: ${self:provider.stage}
-
-package:
-  artifact: lambda_deployment_package.zip
+  apiGateway:
+    shouldStartNameWithService: true
 
 functions:
   app:
@@ -21,6 +20,24 @@ functions:
       - http:
           path: /{proxy+}
           method: any
+  connectHandler:
+    handler: server/connect.handler
+    events:
+      - websocket:
+          route: $connect
+  disconnectHandler:
+    handler: server/disconnect.handler
+    events:
+      - websocket:
+          route: $disconnect
+  messageHandler:
+    handler: server/message.handler
+    events:
+      - websocket:
+          route: $default
+
+package:
+  artifact: lambda_deployment_package.zip
 
 plugins:
   - serverless-offline

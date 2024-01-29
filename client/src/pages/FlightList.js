@@ -3,7 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { Grid, Container, Typography, Button, Alert } from '@mui/material';
 import FlightCard from './FlightCard';
 import SortFlights from './SortFlights';
-import { fetchFlights, pollFlights } from '../utils/api'; // From pollFlights function for the /poll endpoint
+import { fetchFlights, pollFlights } from '../utils/api';
+import { connectWebSocket, closeWebSocket } from '../utils/websocket'; 
 
 function FlightList() {
   const navigate = useNavigate();
@@ -46,25 +47,14 @@ function FlightList() {
   
       loadFlights();
     
-      // WebSocket for real-time updates
-      const ws = new WebSocket('wss://your-websocket-url');
+     // Connect to WebSocket when the component mounts
+      connectWebSocket();
 
-      ws.onmessage = (event) => {
-        const message = JSON.parse(event.data);
-        // Assuming message contains the updated flight data
-        updateFlightData(message.updatedFlight);
-      };
-  
-      return () => {
-        ws.close();
-      };
-    }, [currentPage, itemsPerPage, flightsCache]); // Add any additional dependencies if needed
-  
-    const updateFlightData = (updatedFlight) => {
-      setFlights(prevFlights => prevFlights.map(flight => 
-        flight.id === updatedFlight.id ? updatedFlight : flight
-      ));
+    // Close WebSocket connection when the component unmounts
+    return () => {
+      closeWebSocket();
     };
+  }, [currentPage, itemsPerPage, flightsCache]); // Add any additional dependencies if needed
 
   const loadMoreFlights = async () => {
     if (currentPage < totalPages) {

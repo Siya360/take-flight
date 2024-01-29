@@ -5,6 +5,7 @@ const { validateToken } = require('./authMiddleware');
 const { CognitoIdentityProviderClient, SignUpCommand } = require("@aws-sdk/client-cognito-identity-provider");
 const fs = require('fs');
 const app = express();
+const flightService = require('./flightService');
 
 // Configure AWS SDK
 const client = new CognitoIdentityProviderClient({ region: process.env.COGNITO_REGION });
@@ -283,15 +284,17 @@ app.get('/debug/config', validateToken, (req, res) => {
   res.send(config);
 });
 
-// Show system status, memory usage, or other diagnostics data
-app.get('/debug/status', validateToken, (req, res) => {
-  const status = {
-    memoryUsage: process.memoryUsage(),
-    uptime: process.uptime(),
-    // Add more diagnostics data as needed
-  };
-
-  res.send(status);
+app.get('/api/flights/search', async (req, res) => {
+  try {
+    // Extract search parameters from request query
+    const { departure, arrival, date } = req.query;
+    // Call your internal microservice to fetch flight data
+    const flights = await flightService.searchFlights(departure, arrival, date);
+    res.json(flights);
+  } catch (error) {
+    // Handle errors appropriately
+    res.status(500).send('Error fetching flights');
+  }
 });
 
 // Export the app for serverless use
