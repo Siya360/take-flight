@@ -1,26 +1,79 @@
-# Clone the repository
+# Take-Flight Application
+
+This project is a flight booking application that demonstrates the use of React, Node.js, AWS Lambda, and WebSocket for real-time flight data updates.
+
+## Getting Started
+
+### Prerequisites
+
+Before running the application, make sure you have the following installed:
+Node.js
+Yarn (or npm)
+
+### Clone the repository
 
 To clone the repository, run the following command:
+
+[git clone https://github.com/Siya360/take-flight.git](https://github.com/Siya360/take-flight.git)
+
+### Environment Setup
+
+Navigate to the `/server` directory:
+
+cd server
+
+Copy the .env.example file to .env:
+
+cp .env.example .env
+
+    Open the .env file and fill in the actual configuration values for your environment.
+
+    Repeat steps 1-3 for the /client directory.
+
+Install Dependencies
+
+    Navigate to the /client directory and install the dependencies:
+
 cd client
 yarn install
 
-Running the Application
+Navigate to the /server directory and install the dependencies:
 
-In the project directory, you can run:
+cd server
+yarn install
+
+Running the Application
+Client
+
+In the /client directory, you can run:
+
 yarn start
 
     This runs the app in development mode.
     Open http://localhost:4000 to view it in your browser.
     The page will reload with edits. Lint errors will be shown in the console.
 
+Server
+
+In the /server directory, you can run:
+
+yarn start
+
+    This starts the Node.js server.
+    Ensure the server is running for the client to communicate with the backend services.
+
 Running Tests
 
 To launch the test runner in interactive watch mode, run:
+
+yarn test
+
 yarn test
 
 Building for Production
 
 To build the app for production, run:
+
 yarn build
 
     This builds the app to the build folder.
@@ -40,6 +93,7 @@ Contributing
 
 Contributions are welcome. Please open an issue or submit a pull request with any improvements.
 License
+
 This project is licensed under the MIT License - see the LICENSE file for details.
 
-This updated README.md provides a clearer overview of the project, including updated instructions for using Yarn, a brief description of the new features, and a more detailed project structure.
+Make sure to replace `<repository-url>` with the actual URL of your repository. This updated README.md provides a comprehensive overview of the project, including environment setup instructions, particularly the handling of `.env` files, and a structured guide for running and building the application.
