@@ -2,6 +2,7 @@ const express = require('express');
 require('dotenv').config();
 const bodyParser = require('body-parser');
 const { validateToken } = require('./authMiddleware');
+const validateApiKey = require('./apiKeyValidator'); // Import the API key validator middleware
 const { CognitoIdentityProviderClient, SignUpCommand } = require("@aws-sdk/client-cognito-identity-provider");
 const fs = require('fs');
 const app = express();
@@ -284,7 +285,7 @@ app.get('/debug/config', validateToken, (req, res) => {
   res.send(config);
 });
 
-app.get('/api/flights/search', async (req, res) => {
+app.get('/api/flights/search', validateApiKey, async (req, res) => {
   try {
     // Extract search parameters from request query
     const { departure, arrival, date } = req.query;
