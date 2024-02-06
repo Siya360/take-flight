@@ -19,6 +19,7 @@
     "@testing-library/jest-dom": "^5.12.0",
     "@testing-library/react": "^11.2.7",
     "@testing-library/user-event": "^12.8.3",
+    "cross-env": "^7.0.3",
     "dotenv": "^16.4.1",
     "eslint": "^8.56.0",
     "luxon": "^3.4.4",
@@ -38,7 +39,9 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "lint": "eslint src/"
+    "lint": "eslint src/",
+    "start:dev": "REACT_APP_API_BASE_URL=https://5n75nue5i3.execute-api.us-east-1.amazonaws.com/dev react-scripts start",
+    "start:mock": "REACT_APP_API_BASE_URL=https://virtserver.swaggerhub.com/SIYA360_1/Take-Flight-API/1.0.0 react-scripts start"
   },
   "eslintConfig": {
     "extends": [
