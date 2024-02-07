@@ -1,89 +1,66 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Grid, Container, Typography, Button, Alert } from '@mui/material';
+import { Grid, Container, Typography, Alert, CircularProgress } from '@mui/material';
 import FlightCard from './FlightCard';
 import SortFlights from './SortFlights';
-import { fetchFlights, pollFlights } from '../utils/api';
-import { connectWebSocket, closeWebSocket } from '../utils/websocket'; 
-import useApiCall from '../hooks/useApiCall'; 
+import useApiCall from '../hooks/useApiCall';
 
 function FlightList() {
   const navigate = useNavigate();
-  const { error, isLoading, execute, data } = useApiCall();
-
-  const [sortOption, setSortOption] = useState('Best'); // State for selected sorting option
+  const [flights, setFlights] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 16;
-  
+  const [hasMore, setHasMore] = useState(true);
+  const { execute, isLoading, error } = useApiCall(); // Adjust based on actual useApiCall implementation
+
+  // Correctly handle sort change
+  const handleSortChange = useCallback((sortOption) => {
+    // Implement sorting logic or re-fetch flights based on the new sort option
+    console.log(sortOption); // Placeholder
+  }, []);
+
+  const loadMoreFlights = useCallback(async () => {
+    if (hasMore && !isLoading) {
+      // Example of execute function adjusted to return both flights data and a flag indicating more data
+      const response = await execute(currentPage); // Adjust this to your actual API call structure
+      const newFlights = response.flights; // Assuming the response contains flights data
+      const moreFlightsAvailable = response.moreAvailable; // This flag should come from your API response
+      
+      setFlights(prev => [...prev, ...newFlights]);
+      setHasMore(moreFlightsAvailable); // Update based on the API response
+      if (moreFlightsAvailable) {
+        setCurrentPage(prevPage => prevPage + 1);
+      }
+    }
+}, [currentPage, execute, hasMore, isLoading]);
+
   useEffect(() => {
-    const fetchFlightsData = async () => {
-      await execute(() => fetchFlights(currentPage, itemsPerPage));
+    const handleScroll = () => {
+      if (window.innerHeight + document.documentElement.scrollTop !== document.documentElement.offsetHeight) return;
+      loadMoreFlights();
     };
 
-    fetchFlightsData();
-    connectWebSocket();
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [loadMoreFlights]);
 
-    return () => {
-      closeWebSocket();
-    };
-  }, [currentPage, execute]);
+  useEffect(() => {
+    loadMoreFlights();
+  }, [loadMoreFlights]);
 
-  const loadMoreFlights = async () => {
-    if (currentPage < data.totalPages) {
-      setCurrentPage(currentPage + 1);
-      await execute(() => pollFlights(currentPage + 1, itemsPerPage));
-    }
-  };
-
-  const handleBookFlight = (flightId) => {
-    navigate(`/flight-details/${flightId}`);
-  };
-
-  const handleSortChange = (option) => {
-    setSortOption(option); // Update the selected sorting option
-  };
-
-  const sortFlights = (flights, option) => {
-    switch (option) {
-      case 'Price Low to High':
-        return flights.sort((a, b) => a.price - b.price);
-      case 'Price High to Low':
-        return flights.sort((a, b) => b.price - a.price);
-      case 'Duration Short to Long':
-        return flights.sort((a, b) => a.duration - b.duration);
-      case 'Duration Long to Short':
-        return flights.sort((a, b) => b.duration - a.duration);
-      default:
-        return flights;
-    }
-  };
-
-  const displayedFlights = isLoading ? [] : sortFlights(data?.flights || [], sortOption);
-
-  if (isLoading) {
-    return <Typography>Loading flights...</Typography>;
-  }
-
-  if (error) {
-    return <Alert severity="error">{error.message}</Alert>;
-  }
+  if (isLoading && currentPage === 1) return <CircularProgress />;
+  if (error) return <Alert severity="error">{error}</Alert>;
 
   return (
     <Container>
-      <SortFlights onSort={handleSortChange} /> {/* Pass the handleSortChange function to SortFlights */}
+      <SortFlights onSort={handleSortChange} />
       <Grid container spacing={2}>
-        {displayedFlights.map(flight => (
-          <Grid item key={flight.id} xs={12} sm={6} md={4}>
-            <FlightCard
-              flight={flight}
-              onBookFlight={() => handleBookFlight(flight.id)}
-            />
+        {flights.map((flight, index) => (
+          <Grid item key={index} xs={12} sm={6} md={4}>
+            <FlightCard flight={flight} onBookFlight={() => navigate(`/flight-details/${flight.id}`)} />
           </Grid>
         ))}
       </Grid>
-      {currentPage < data.totalPages && (
-        <Button onClick={loadMoreFlights}>Load More</Button>
-      )}
+      {isLoading && <Typography>Loading more flights...</Typography>}
     </Container>
   );
 }
