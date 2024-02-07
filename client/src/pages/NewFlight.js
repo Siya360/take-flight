@@ -6,6 +6,8 @@ import { AdapterLuxon } from '@mui/x-date-pickers/AdapterLuxon';
 import { DateTime } from 'luxon';
 import { createFlight } from '../utils/api';
 import { styled } from '@mui/material/styles';
+import Alert from '@mui/material/Alert';
+import useApiCall from '../hooks/useApiCall'; // Adjust the path based on your project structure
 
 // Custom Styles
 
@@ -51,123 +53,6 @@ const CustomTextField = styled(TextField)(({ theme }) => ({
       borderRadius: theme.shape.borderRadius,
     },
   }));
-  
-
-  const NewFlight = () => {
-    const navigate = useNavigate();
-
-  // State variables for flight details
-  const [destination, setDestination] = useState('');
-  const [departure, setDeparture] = useState('');
-  const [returnDate, setReturnDate] = useState(DateTime.local());
-  const [cabinClass, setCabinClass] = useState('Economy');
-  const [isLoading, setIsLoading] = useState(false);
-
-  // State variable for the departure date picker
-  const [selectedDepartureDate, setSelectedDepartureDate] = useState(DateTime.local());
-
-  // State variable for the return date picker
-  const [selectedReturnDate, setSelectedReturnDate] = useState(DateTime.local());
-  const [isReturnPickerOpen, setReturnPickerOpen] = useState(false); // State for return date picker visibility
-
-  // State variables for travellers popover
-  const [travellersAnchorEl, setTravellersAnchorEl] = useState(null);
-  const [adults, setAdults] = useState(1);
-  const [children, setChildren] = useState(0);
-  const [infants, setInfants] = useState(0);
-
-  const MAX_PASSENGERS = 9; // Maximum number of passengers allowed
-
-  // Define the `id` for the popover
-  const id = 'simple-popover';
-  const openTravellers = Boolean(travellersAnchorEl); // This should be a boolean value based on your `travellersAnchorEl`
-
-  // Handler functions for opening and closing the travellers popover
-  const handleTravellersClick = (event) => {
-    setTravellersAnchorEl(event.currentTarget);
-  };
-
-  const handleTravellersClose = () => {
-    setTravellersAnchorEl(null);
-  };
-
-  // Handler functions for date changes
-  const handleDepartureDateChange = (date) => {
-    setSelectedDepartureDate(date); // Update the state for the UI display
-};
-
-const handleReturnDateChange = (date) => {
-  setSelectedReturnDate(date); // Update the state for the UI display
-  setReturnDate(date); // Update the state for form submission or backend logic
-};
-
-// Event Handler for Adults Count Input
-// Validates and updates the number of adult passengers
-const handleAdultsChange = (e) => {
-  const newAdults = Number(e.target.value);
-  if (newAdults >= 1 && newAdults + children + infants <= MAX_PASSENGERS) {
-    setAdults(newAdults);
-  }
-};
-
-// Event Handler for Children Count Input
-// Validates and updates the number of child passengers
-const handleChildrenChange = (e) => {
-  const newChildren = Number(e.target.value);
-  if (newChildren >= 0 && adults >= newChildren && adults + newChildren + infants <= MAX_PASSENGERS) {
-    setChildren(newChildren);
-  }
-};
-
-// Event Handler for Infants Count Input
-// Validates and updates the number of infant passengers
-const handleInfantsChange = (e) => {
-  const newInfants = Number(e.target.value);
-  if (newInfants >= 0 && adults >= newInfants && adults + children + newInfants <= MAX_PASSENGERS) {
-    setInfants(newInfants);
-  }
-};
-
-// Add a useEffect to enforce any rules when state changes, if needed
-useEffect(() => {
-  // For example, adjust children and infants if adults are reduced
-  if (adults < children + infants) {
-    setChildren(0);
-    setInfants(0);
-  }
-}, [adults, children, infants]);
-
-  // Function to handle form submission
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-    setIsLoading(true);
-
-    // Construct the flight data object from state variables
-    const flightData = {
-      destination,
-      departure,
-      flightDate: selectedDepartureDate.toISO(),
-      returnDate,
-      cabinClass,
-      passengers: {
-        adults,
-        children,
-        infants,
-      },
-    };
-
-    try {
-      // Use the createFlight API utility to send the flight data
-      const result = await createFlight(flightData);
-      console.log(result); // Log the result or handle as needed
-      navigate('/flights'); // Navigate to the flight list on success
-    } catch (error) {
-      console.error('There was an error submitting the flight data:', error);
-      // Handle the error appropriately in your UI
-    } finally {
-      setIsLoading(false); // Reset loading state
-    }
-  };
 
   // Add custom styles for the Paper component
   const paperStyle = {
@@ -177,8 +62,79 @@ useEffect(() => {
     backgroundColor: '#3f51b5', 
     color: 'white' // Text color for better readability
   };
+  
+  const NewFlight = () => {
+    const navigate = useNavigate();
+    const { execute, data, isLoading, error } = useApiCall(createFlight);
+  
+    // State variables for flight form fields
+    const [destination, setDestination] = useState('');
+    const [departure, setDeparture] = useState('');
+    const [selectedDepartureDate, setSelectedDepartureDate] = useState(DateTime.local());
+    const [selectedReturnDate, setSelectedReturnDate] = useState(DateTime.local());
+    const [cabinClass, setCabinClass] = useState('Economy');
+    const [adults, setAdults] = useState(1);
+    const [children, setChildren] = useState(0);
+    const [infants, setInfants] = useState(0);
+    const [openTravellers, setOpenTravellers] = useState(false);
+    const [travellersAnchorEl, setTravellersAnchorEl] = useState(null);
+    const [isReturnPickerOpen, setReturnPickerOpen] = useState(false);
+    const id = 'simple-popover';
+
+    const handleDepartureDateChange = (date) => {
+      setSelectedDepartureDate(date);
+    };
+  
+    const handleReturnDateChange = (date) => {
+      setSelectedReturnDate(date);
+    };
+  
+    const handleAdultsChange = (e) => {
+      setAdults(Number(e.target.value));
+    };
+  
+    const handleChildrenChange = (e) => {
+      setChildren(Number(e.target.value));
+    };
+  
+    const handleInfantsChange = (e) => {
+      setInfants(Number(e.target.value));
+    };
+
+    const handleTravellersClick = (event) => {
+      setTravellersAnchorEl(event.currentTarget);
+      setOpenTravellers(true); // Open the popover
+    };
+    
+    const handleTravellersClose = () => {
+      setTravellersAnchorEl(null);
+      setOpenTravellers(false); // Close the popover
+    };
+  
+    useEffect(() => {
+      // Any side effects related to state changes
+    }, [adults, children, infants]);
+  
+    const handleSubmit = async (event) => {
+      event.preventDefault();
+      const flightData = {
+        // ... your flight data
+      };
+  
+      execute(flightData);
+    };
+  
+    // Redirect on successful API call
+    useEffect(() => {
+      if (data) {
+        navigate('/flights');
+      }
+    }, [data, navigate]);
 
   return (
+    <Container>
+      {/* Conditionally render the error message */}
+      {error && <Alert severity="error">{error}</Alert>}
     <LocalizationProvider dateAdapter={AdapterLuxon}>
       <Paper style={paperStyle} elevation={3}>
         <Container maxWidth="md">
@@ -354,6 +310,7 @@ useEffect(() => {
       </Container> {/* Closing tag for the container wrapping the form */}
     </Paper> {/* Closing tag for the paper component wrapping everything */}
   </LocalizationProvider>
+  </Container>
 );
    
   };  
