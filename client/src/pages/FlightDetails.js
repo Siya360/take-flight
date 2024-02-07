@@ -1,41 +1,35 @@
-import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
-import { CircularProgress, Typography, Container, Box } from '@mui/material';
-import { fetchFlightDetails } from '../utils/api';
-import { formatPrice } from '../utils/formatUtils';
+// Import necessary dependencies
+import React, { useEffect } from 'react'; // React and useEffect hook
+import { useParams } from 'react-router-dom'; // Hook for accessing URL parameters
+import { CircularProgress, Typography, Container, Box } from '@mui/material'; // MUI components
+import { fetchFlightDetails } from '../utils/api'; // API function to fetch flight details
+import { formatPrice, formatDateTime } from '../utils/formatUtils'; // Utility functions for formatting
+import useApiCall from '../hooks/useApiCall'; // Custom hook for making API calls
 
-function formatDateTime(dateTime) {
-  // Add formatting function for date and time if needed
-  return dateTime; // Replace this with actual formatting
-}
-
+// Define the FlightDetails component
 function FlightDetails() {
+  // Get the flight ID from the URL parameters
   const { id } = useParams();
-  const [flight, setFlight] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
 
+  // Use the useApiCall hook to manage the API call state
+  const { data: flight, isLoading, error, execute } = useApiCall();
+
+  // Use the useEffect hook to fetch the flight details when the component mounts
   useEffect(() => {
-    fetchFlightDetails(id)
-      .then(data => {
-        setFlight(data);
-        setLoading(false);
-      })
-      .catch(err => {
-        console.error("Error fetching flight details:", err);
-        setError(err);
-        setLoading(false);
-      });
-  }, [id]);
+    execute(() => fetchFlightDetails(id));
+  }, [id, execute]); // Dependencies for the useEffect hook
 
-  if (loading) {
+  // If the API call is still loading, display a loading spinner
+  if (isLoading) {
     return <CircularProgress />;
   }
 
+  // If there was an error with the API call, or if the flight data is not available, display an error message
   if (error || !flight) {
     return <Typography variant="h6">Flight details not available.</Typography>;
   }
 
+  // Render the flight details
   return (
     <Container>
       <Typography variant="h4" gutterBottom>Flight Details</Typography>
@@ -52,4 +46,5 @@ function FlightDetails() {
   );
 }
 
+// Export the FlightDetails component as the default export
 export default FlightDetails;
