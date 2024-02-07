@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import { Button, Menu, MenuItem } from '@mui/material';
+import { Button, Menu, MenuItem, ListItemIcon } from '@mui/material';
+import Check from '@mui/icons-material/Check';
 
 const sortOptions = [
   { label: 'Price Low to High', value: 'PriceLowToHigh' },
@@ -38,9 +39,14 @@ function SortFlights({ onSort }) {
         open={Boolean(anchorEl)}
         onClose={handleClose}
       >
-        {sortOptions.map(option => (
-          <MenuItem key={option.value} onClick={() => handleSort(option.value)}>
+        {sortOptions.map((option) => (
+          <MenuItem key={option.value} onClick={() => handleSort(option.value)} selected={option.value === selectedSort}>
             {option.label}
+            {option.value === selectedSort && (
+              <ListItemIcon>
+                <Check />
+              </ListItemIcon>
+            )}
           </MenuItem>
         ))}
       </Menu>
@@ -48,7 +54,6 @@ function SortFlights({ onSort }) {
   );
 }
 
-// Define PropTypes
 SortFlights.propTypes = {
   onSort: PropTypes.func.isRequired,
 };
