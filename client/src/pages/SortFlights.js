@@ -2,6 +2,12 @@ import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { Button, Menu, MenuItem } from '@mui/material';
 
+const sortOptions = [
+  { label: 'Price Low to High', value: 'PriceLowToHigh' },
+  { label: 'Price High to Low', value: 'PriceHighToLow' },
+  { label: 'Duration Short to Long', value: 'DurationShortToLong' },
+  { label: 'Duration Long to Short', value: 'DurationLongToShort' },
+];
 function SortFlights({ onSort }) {
   const [anchorEl, setAnchorEl] = useState(null);
   const [selectedSort, setSelectedSort] = useState('Best');
@@ -32,10 +38,11 @@ function SortFlights({ onSort }) {
         open={Boolean(anchorEl)}
         onClose={handleClose}
       >
-        <MenuItem onClick={() => handleSort('Price Low to High')}>Price Low to High</MenuItem>
-        <MenuItem onClick={() => handleSort('Price High to Low')}>Price High to Low</MenuItem>
-        <MenuItem onClick={() => handleSort('Duration Short to Long')}>Duration Short to Long</MenuItem>
-        <MenuItem onClick={() => handleSort('Duration Long to Short')}>Duration Long to Short</MenuItem>
+        {sortOptions.map(option => (
+          <MenuItem key={option.value} onClick={() => handleSort(option.value)}>
+            {option.label}
+          </MenuItem>
+        ))}
       </Menu>
     </div>
   );
