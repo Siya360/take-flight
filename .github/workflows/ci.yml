@@ -22,15 +22,18 @@ jobs:
         node-version: ${{ matrix.node-version }}
     
     # Cache for client
-    - name: Get yarn cache directory path
-      id: yarn-cache-dir-path-client
-      run: echo "::set-output name=dir::$(yarn cache dir)"
+    - name: Get yarn cache directory path for client
+      run: |
+        echo "YARN_CACHE_DIR_CLIENT=$(yarn cache dir)" >> $GITHUB_ENV
       working-directory: client
+
+    - name: Debug YARN_CACHE_DIR_CLIENT
+      run: echo "YARN_CACHE_DIR_CLIENT=${{ env.YARN_CACHE_DIR_CLIENT }}"
 
     - uses: actions/cache@v2
       id: yarn-cache-client # use this to check for the 'cache-hit' (`steps.yarn-cache-client.outputs.cache-hit != 'true'`)
       with:
-        path: ${{ steps.yarn-cache-dir-path-client.outputs.dir }}
+        path: ${{ env.YARN_CACHE_DIR_CLIENT }}
         key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
         restore-keys: |
           ${{ runner.os }}-yarn-
@@ -45,15 +48,18 @@ jobs:
       working-directory: client
       
     # Cache for server
-    - name: Get yarn cache directory path
-      id: yarn-cache-dir-path-server
-      run: echo "::set-output name=dir::$(yarn cache dir)"
+    - name: Get yarn cache directory path for server
+      run: |
+        echo "YARN_CACHE_DIR_SERVER=$(yarn cache dir)" >> $GITHUB_ENV
       working-directory: server
+
+    - name: Debug YARN_CACHE_DIR_SERVER
+      run: echo "YARN_CACHE_DIR_SERVER=${{ env.YARN_CACHE_DIR_SERVER }}"
 
     - uses: actions/cache@v2
       id: yarn-cache-server # use this to check for 'cache-hit' (`steps.yarn-cache-server.outputs.cache-hit != 'true'`)
       with:
-        path: ${{ steps.yarn-cache-dir-path-server.outputs.dir }}
+        path: ${{ env.YARN_CACHE_DIR_SERVER }}
         key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
         restore-keys: |
           ${{ runner.os }}-yarn-
@@ -62,5 +68,3 @@ jobs:
     - name: Install server dependencies
       run: yarn install --frozen-lockfile
       working-directory: server
-
-    
