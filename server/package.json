@@ -23,5 +23,8 @@
     "serverless": "^3.38.0",
     "serverless-express": "^2.0.12",
     "serverless-offline": "^13.3.2"
+  },
+  "devDependencies": {
+    "serverless-python-requirements": "^6.0.1"
   }
 }
