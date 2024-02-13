@@ -6,7 +6,7 @@ app.register_blueprint(flights_blueprint, url_prefix='/api/flights')
 
 @app.route('/')
 def index():
-    return 'Hello, World!'
+    return 'Welcome to TakeFlight 101!'
 
 if __name__ == '__main__':
     app.run(debug=True)
