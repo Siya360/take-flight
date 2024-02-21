@@ -1,22 +1,18 @@
-# server/microservices/flightService/app.py
-# Import the Flask framework
 from flask import Flask
-# Import the flights blueprint from the api module
-from api.flights import flights_blueprint
+from api.flights import search_flights, poll_flights  # Make sure poll_flights is imported
 
-# Initialize the Flask application
 app = Flask(__name__)
 
-# Register the flights blueprint with the Flask application
-# Prefix the blueprint URL with '/api/flights'
-app.register_blueprint(flights_blueprint, url_prefix='/api/flights')
-
-# Define a route for the root URL ('/')
-# This route returns a welcome message to the user
 @app.route('/')
 def index():
-    return 'Welcome to TakeFlight 101!'
+    return "Welcome to TakeFlight 111! Sit back, relax, and enjoy the journey!"
 
-# Run the Flask application if this script is executed directly
+# Maintain the existing rule for search
+app.add_url_rule('/search/create', view_func=search_flights, methods=['POST'])
+
+# Update the poll URL rule to include the session token in the path
+app.add_url_rule('/search/poll/<session_token>', view_func=poll_flights, methods=['POST'])  # Updated poll URL rule
+
 if __name__ == '__main__':
-    app.run(debug=True)  # Run the app in debug mode for easier development
+    app.run(debug=True)
+

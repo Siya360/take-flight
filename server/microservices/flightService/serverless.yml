@@ -18,12 +18,13 @@ provider:
         - "execute-api:Invoke"
         - "lambda:InvokeFunction"
       Resource: "*"
+  logRetentionInDays: 14 # Set CloudWatch Logs retention period (e.g., 14 days)
 
 # Define functions and their respective HTTP events
 functions:
   createSearch:
     # Define handler function for creating flight searches
-    handler: handler.create_search
+    handler: create_handler.create_search
     events:
       # Define HTTP event for creating flight searches
       - http:
@@ -33,12 +34,12 @@ functions:
           # Add detailed explanation of this event's purpose and configuration options
   pollSearch:
     # Define handler function for polling flight search results
-    handler: handler.poll_search
+    handler: poll_handler.poll_search
     events:
       # Define HTTP event for polling flight search results
       - http:
           path: flights/search/poll/{sessionToken}
-          method: get
+          method: post
           cors: true  # Enable CORS for this endpoint
           # Add detailed explanation of this event's purpose and configuration options
 
