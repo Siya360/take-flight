@@ -1,19 +1,28 @@
 from flask import Flask, request, jsonify
 import requests
 import os
+from werkzeug.exceptions import HTTPException
 
 app = Flask(__name__)
 
 # Retrieve API key from environment variables
 SKYSCANNER_API_KEY = os.getenv('SKYSCANNER_API_KEY')
 
+class InvalidQueryError(HTTPException):
+    code = 400
+    description = 'Invalid query parameters'
+
 @app.route('/search/create', methods=['POST'])
 def search_flights():
-    payload = request.json
+    payload = request.json  # Define payload here
     headers = {
         'Content-Type': 'application/json',
         'x-api-key': SKYSCANNER_API_KEY
     }
+
+    # Validate the payload and raise an InvalidQueryError if the payload is invalid
+    if not payload or not payload.get('query'):
+        raise InvalidQueryError()
 
     # Make request to Skyscanner API /create endpoint
     create_response = requests.post(
@@ -21,7 +30,7 @@ def search_flights():
         json=payload,
         headers=headers
     )
-    
+
     # Directly return the status code and response from the Skyscanner API
     return jsonify({
         'status_code': create_response.status_code,
@@ -48,4 +57,3 @@ def poll_flights(session_token):
 
 if __name__ == '__main__':
     app.run(debug=True)
-

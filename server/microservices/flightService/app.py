@@ -5,7 +5,7 @@ app = Flask(__name__)
 
 @app.route('/')
 def index():
-    return "Welcome to TakeFlight 111! Sit back, relax, and enjoy the journey!"
+    return "Welcome to TakeFlight 112! Sit back, relax, and enjoy the journey!"
 
 # Maintain the existing rule for search
 app.add_url_rule('/search/create', view_func=search_flights, methods=['POST'])
