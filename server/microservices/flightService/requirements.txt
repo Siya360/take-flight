@@ -1,6 +1,0 @@
-requests
-python-dotenv
-# Only add if you're using Flask for local development/testing
-Flask
-# Only add if interacting with AWS services other than Lambda
-boto3
