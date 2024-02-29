@@ -85,5 +85,8 @@
     ],
     "yaml.schemas": {
         "kubernetes://schema/v1%40service": "file:///Users/suprim_being/Developer/Projects/za_flight/flight-client/k8s-config.yaml"
-    }
+    },
+    "python.analysis.extraPaths": [
+        "./server/microservices/flightService/api"
+    ]
 }
