@@ -1,3 +1,5 @@
+# server/microservices/flightService/api/flights.py
+
 from flask import Flask, request, jsonify, abort
 import ratelimit
 import requests
@@ -8,6 +10,7 @@ from functools import wraps
 from pybreaker import CircuitBreaker
 import pybreaker
 from ratelimit import limits, sleep_and_retry, RateLimitException
+from .api_errors import ApiError, InvalidSearchQueryError, DestinationNotFoundError
 
 # Load configuration and establish a logging mechanism
 from .. import config
@@ -57,9 +60,10 @@ def skyscanner_api_call(method, url, headers, payload=None):
     return _make_request()
 
 # Error handling
-@app.errorhandler(400)  # Bad Request
-def handle_bad_request(error):
-    return jsonify({'error': error.description}), 400
+@app.errorhandler(ApiError) 
+def handle_api_error(error):
+    response = jsonify({'error': error.message})
+    return response, error.status_code
 
 def handle_skyscanner_error(err):
     logging.error(SKYSCANNER_API_ERROR_MSG, err, exc_info=True) # Include exception info too
@@ -99,7 +103,7 @@ def search_flights():
     
     # Validate the payload and raise an InvalidQueryError if the payload is invalid
     if not payload or not payload.get('query'):
-        abort(400, description="There seems to be a problem with your flight search. Please double-check your destination and travel dates.") 
+        raise InvalidSearchQueryError("There seems to be a problem with your flight search. Please double-check your destination and travel dates.") 
 
     try: # Make request to Skyscanner API /create endpoint
         create_response = skyscanner_api_call(
@@ -129,17 +133,20 @@ def poll_flights(session_token):
         'Content-Type': 'application/json',
         'x-api-key': SKYSCANNER_API_KEY
     }
-
-    # Construct the correct polling endpoint URL with the session token
     poll_url = f'https://partners.api.skyscanner.net/apiservices/v3/flights/live/search/poll/{session_token}'
     try:
     # Make the polling request
         poll_response = skyscanner_api_call('POST', poll_url, headers, None)
         logging.info('Polling request successful')
+        logging.debug(f'Poll response before raise_for_status: {poll_response}')
         poll_response.raise_for_status()
 
     except requests.exceptions.HTTPError as err:
         logging.error('Error from Skyscanner API: %s', err)
+        
+        # Check for 404 specifically:
+        if err.response.status_code == 404:
+            raise DestinationNotFoundError('The specified destination or flight route could not be found.')
         return handle_skyscanner_error(err)
 
     # if successful continue
