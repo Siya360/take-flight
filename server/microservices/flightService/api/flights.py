@@ -1,4 +1,5 @@
 from flask import Flask, request, jsonify, abort
+import ratelimit
 import requests
 import os
 import logging
@@ -6,12 +7,21 @@ from tenacity import retry, stop_after_attempt, wait_exponential, retry_if_excep
 from functools import wraps
 from pybreaker import CircuitBreaker
 import pybreaker
+from ratelimit import limits, sleep_and_retry, RateLimitException
 
 # Load configuration and establish a logging mechanism
 from .. import config
+# Rate-limiting setup 
+CREATE_SEARCH_LIMIT = limits(calls=int(config.RATE_LIMIT_CREATE_SEARCH.split('/')[0]), period=60) # 60 seconds = 1 minute
+POLL_SEARCH_LIMIT = limits(calls=int(config.RATE_LIMIT_POLL_SEARCH.split('/')[0]), period=60)
+OTHER_LIMITS = limits(calls=int(config.RATE_LIMIT_OTHER_ENDPOINTS.split('/')[0]), period=60) 
+
 logging.basicConfig(filename='flight_service.log', level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s - [%(user)s - %(request_id)s]')
 
 app = Flask(__name__)
+
+# Rate-limiting setup 
+LIMIT = limits(calls=int(config.RATE_LIMIT.split('/')[0]), period=float(config.RATE_LIMIT.split('/')[1]))
 
 # Circuit breaker instance
 cb = CircuitBreaker(fail_max=3, reset_timeout=60)
@@ -83,6 +93,7 @@ def handle_skyscanner_error(err):
 
 # Flight search endpoints
 @app.route('/search/create', methods=['POST'])
+@CREATE_SEARCH_LIMIT
 def search_flights():
     payload = request.json  # Define payload here
     
@@ -112,6 +123,7 @@ def search_flights():
     }), create_response.status_code
 
 @app.route('/search/poll/<session_token>', methods=['POST'])
+@POLL_SEARCH_LIMIT
 def poll_flights(session_token):
     headers = {
         'Content-Type': 'application/json',
@@ -132,6 +144,15 @@ def poll_flights(session_token):
 
     # if successful continue
     return jsonify(poll_response.json()), 200
+
+# Enhanced rate limit error handler
+@app.errorhandler(RateLimitException)
+def handle_rate_limit(error):
+    return jsonify({
+        'error': 'Rate limit exceeded for Skyscanner API. Please try again later or contact your account manager for assistance.' 
+    }), 429
+
+# Entrypoint
 
 if __name__ == '__main__':
     app.run(debug=True)
