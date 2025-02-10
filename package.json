@@ -1,0 +1,13 @@
+{
+  "name": "take-flight-root",
+  "private": true,
+  "workspaces": [
+    "client",
+    "server"
+  ],
+  "scripts": {
+    "start:client": "yarn workspace flight-booking-front-end start",
+    "start:server": "yarn workspace server start",
+    "start": "yarn start:client && yarn start:server"
+  }
+}
