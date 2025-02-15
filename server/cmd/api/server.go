@@ -16,8 +16,6 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 	"gopkg.in/yaml.v3"
 
-	flightmongo "github.com/Siya360/take-flight/server/pkg/flights/repository/mongodb"
-
 	"github.com/Siya360/take-flight/server/internal/cache"
 	"github.com/Siya360/take-flight/server/internal/database"
 	adminmongo "github.com/Siya360/take-flight/server/pkg/admin/repository/mongodb"
@@ -26,6 +24,7 @@ import (
 	authservice "github.com/Siya360/take-flight/server/pkg/auth/service"
 	bookingmongo "github.com/Siya360/take-flight/server/pkg/bookings/repository/mongodb"
 	bookingservice "github.com/Siya360/take-flight/server/pkg/bookings/service"
+	flightmongo "github.com/Siya360/take-flight/server/pkg/flights/repository/mongodb"
 	flightservice "github.com/Siya360/take-flight/server/pkg/flights/service"
 	usermongo "github.com/Siya360/take-flight/server/pkg/users/repository/mongodb"
 	userservice "github.com/Siya360/take-flight/server/pkg/users/service"
