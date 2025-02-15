@@ -1,10 +1,35 @@
+# Dependencies
 node_modules/
+/vendor/
+
+# IDE specific
 .vscode/
-.eslintcache
+.idea/
+*.swp
+*.swo
+
+# Environment variables
+.env
+.env.*
+.env.local
+.env.*.local
+!.env.example
+
+# macOS specific
 .DS_Store
+.AppleDouble
+.LSOverride
+
+# Go specific
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+
+.eslintcache
 *.log
 dist/
 coverage/
-.env
-.env.*
-!.env.example
