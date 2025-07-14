@@ -62,7 +62,7 @@ func (h *AuthHandler) Register(c echo.Context) error {
 // Logout handles user logout
 func (h *AuthHandler) Logout(c echo.Context) error {
 	// Get user ID from context (set by auth middleware)
-	userID := c.Get("userID").(string)
+	userID := c.Get("user_id").(string)
 
 	err := h.authService.Logout(c.Request().Context(), userID)
 	if err != nil {
@@ -117,7 +117,7 @@ func (h *AuthHandler) ValidateToken(c echo.Context) error {
 
 // GetCurrentUser returns the current authenticated user's information
 func (h *AuthHandler) GetCurrentUser(c echo.Context) error {
-	userID := c.Get("userID").(string)
+	userID := c.Get("user_id").(string)
 
 	user, err := h.authService.GetUserByID(c.Request().Context(), userID)
 	if err != nil {
@@ -138,7 +138,7 @@ func (h *AuthHandler) UpdatePassword(c echo.Context) error {
 		return err
 	}
 
-	userID := c.Get("userID").(string)
+	userID := c.Get("user_id").(string)
 
 	err := h.authService.UpdatePassword(
 		c.Request().Context(),
