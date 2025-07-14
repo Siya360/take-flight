@@ -4,6 +4,7 @@ package middleware
 
 import (
 	"net/http"
+	"strconv"
 	"strings"
 
 	"github.com/labstack/echo/v4"
@@ -63,7 +64,7 @@ func CORS(config *CORSConfig) echo.MiddlewareFunc {
 			res.Header().Set("Access-Control-Allow-Origin", allowOrigins)
 			res.Header().Set("Access-Control-Allow-Methods", allowMethods)
 			res.Header().Set("Access-Control-Allow-Headers", allowHeaders)
-			res.Header().Set("Access-Control-Max-Age", string(maxAge))
+			res.Header().Set("Access-Control-Max-Age", strconv.Itoa(maxAge))
 
 			if config.AllowCredentials {
 				res.Header().Set("Access-Control-Allow-Credentials", "true")
