@@ -24,6 +24,7 @@ import (
 	authservice "github.com/Siya360/take-flight/server/pkg/auth/service"
 	bookingmongo "github.com/Siya360/take-flight/server/pkg/bookings/repository/mongodb"
 	bookingservice "github.com/Siya360/take-flight/server/pkg/bookings/service"
+	"github.com/Siya360/take-flight/server/pkg/common"
 	flightmongo "github.com/Siya360/take-flight/server/pkg/flights/repository/mongodb"
 	flightservice "github.com/Siya360/take-flight/server/pkg/flights/service"
 	usermongo "github.com/Siya360/take-flight/server/pkg/users/repository/mongodb"
@@ -154,8 +155,8 @@ func (app *Application) setupServer() error {
 	adminRepo := adminmongo.NewMongoAdminRepository(db)
 
 	// Create auth service config
-	authConfig := &authservice.Config{
-		JWT: authservice.JWTConfig{
+	authConfig := &common.Config{
+		JWT: common.JWTConfig{
 			Secret:        app.config.JWT.Secret,
 			ExpireHours:   app.config.JWT.ExpireHours,
 			RefreshSecret: app.config.JWT.RefreshSecret,
@@ -165,7 +166,7 @@ func (app *Application) setupServer() error {
 	// Initialize services
 	authService := authservice.NewAuthService(authConfig, authRepo, app.cacheClient)
 	userService := userservice.NewUserService(userRepo)
-	flightService := flightservice.NewFlightService(flightRepo, app.cacheClient)
+	flightService := flightservice.NewFlightService(flightRepo)
 	bookingService := bookingservice.NewBookingService(bookingRepo, flightService, app.cacheClient)
 	adminService := adminservice.NewAdminService(adminRepo, adminRepo, app.cacheClient)
 
