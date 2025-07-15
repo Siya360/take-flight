@@ -44,6 +44,17 @@ cd server
 go run ./cmd/api --config configs/app.yaml
 ```
 
+## Docker
+
+The repository includes a `Dockerfile` and `docker-compose.yml` for a containerised
+setup. Build and run the API along with MongoDB and Redis using:
+
+```bash
+docker compose up --build
+```
+
+The server will be available on [http://localhost:8080](http://localhost:8080).
+
 ## Configuration
 
 The file `server/configs/app.yaml` contains all runtime settings. Below is an example configuration:
