@@ -33,3 +33,6 @@ node_modules/
 *.log
 dist/
 coverage/
+# Python
+__pycache__/
+*.py[cod]
