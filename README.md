@@ -14,6 +14,7 @@ bookings, and admin) runs as an independent Go service while a Python orchestrat
 | Admin         | Go       | `services/admin`          | 8085         |
 | Orchestrator  | Python   | `agents/orchestrator`     | 8090         |
 
+
 Each Go service exposes a `/health` endpoint using Echo. The orchestrator uses FastAPI to host LangChain agents.
 
 ## Development Requirements
@@ -46,6 +47,20 @@ docker compose up --build
 ```
 
 Service endpoints will be available on `localhost` using the ports listed above.
+
+## Supporting Infrastructure
+main
+
+The compose file also starts supporting services for persistence, caching, and messaging:
+
+
+| Service  | Purpose          | Default Port |
+|----------|------------------|--------------|
+| MongoDB  | Document store   | 27017        |
+| Redis    | Cache            | 6379         |
+| NATS     | Message broker   | 4222         |
+
+main
 
 ## Contribution Guidelines
 
