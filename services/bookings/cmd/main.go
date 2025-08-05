@@ -1,19 +1,19 @@
 package main
 
 import (
-    "log"
+	"log"
+	"net/http"
 
-    "github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4"
 )
 
 func main() {
-    e := echo.New()
-    e.GET("/health", func(c echo.Context) error {
-        return c.String(200, "OK")
-    })
+	e := echo.New()
+	e.GET("/health", func(c echo.Context) error {
+		return c.JSON(http.StatusOK, map[string]string{"status": "ok"})
+	})
 
-    if err := e.Start(":8080"); err != nil {
-        log.Fatalf("server error: %v", err)
-    }
+	if err := e.Start(":8080"); err != nil {
+		log.Fatalf("server error: %v", err)
+	}
 }
-
