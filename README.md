@@ -1,89 +1,68 @@
 # take-flight
 
-Take Flight is a proof-of-concept flight booking API written in Go. The project exposes a REST interface for authentication, booking flights and basic administration tasks.
+Take Flight is evolving into a microservice-based flight management platform. Each domain (authentication, users, flights,
+bookings, and admin) runs as an independent Go service while a Python orchestrator coordinates higher-level workflows for AI agents.
 
-## Requirements
+## Services
+
+| Service       | Language | Directory                 | Default Port |
+|---------------|----------|---------------------------|--------------|
+| Auth          | Go       | `services/auth`           | 8081         |
+| Users         | Go       | `services/users`          | 8082         |
+| Flights       | Go       | `services/flights`        | 8083         |
+| Bookings      | Go       | `services/bookings`       | 8084         |
+| Admin         | Go       | `services/admin`          | 8085         |
+| Orchestrator  | Python   | `agents/orchestrator`     | 8090         |
+
+Each Go service exposes a `/health` endpoint using Echo. The orchestrator uses FastAPI to host LangChain agents.
+
+## Development Requirements
 
 - Go 1.22+
-- MongoDB and Redis instances (local installations are fine for development)
+- Python 3.11+
+- Docker (optional for containerized workflow)
 
-## Setup
+## Building Services
 
-See [server/docs/setup.md](server/docs/setup.md) for full instructions. In short:
-
-```bash
-# get dependencies
-cd server
-go mod download
-
-# adjust configuration
-cp configs/app.yaml configs/app.local.yaml  # edit values as needed
-```
-
-## Building
-
-Compile the API binary from the `server` directory:
+Compile any service individually, e.g. the auth service:
 
 ```bash
-cd server
-go build -o bin/take-flight ./cmd/api
+go build -o /tmp/auth ./services/auth/cmd
 ```
 
-## Running
-
-Run the server with your configuration file:
+The Python orchestrator can be checked with:
 
 ```bash
-./bin/take-flight --config configs/app.yaml
+python -m py_compile agents/orchestrator/main.py
 ```
 
-You can also run it directly via `go run`:
+## Docker Compose
 
-```bash
-cd server
-go run ./cmd/api --config configs/app.yaml
-```
-
-## Docker
-
-The repository includes a `Dockerfile` and `docker-compose.yml` for a containerised
-setup. Build and run the API along with MongoDB and Redis using:
+The repository includes a `docker-compose.yml` that builds all services and supporting dependencies.
+Start the stack with:
 
 ```bash
 docker compose up --build
 ```
 
-The server will be available on [http://localhost:8080](http://localhost:8080).
+Service endpoints will be available on `localhost` using the ports listed above.
 
-## Configuration
+## Supporting Infrastructure
 
-The file `server/configs/app.yaml` contains all runtime settings. Below is an example configuration:
+The compose file also starts supporting services for persistence, caching, and messaging:
 
-```yaml
-server:
-  host: 0.0.0.0
-  port: 8080
-mongodb:
-  uri: mongodb://localhost:27017
-  database: takeflight
-redis:
-  host: localhost
-  port: 6379
-  password: ""
-  db: 0
-jwt:
-  secret: example-secret
-  expireHours: 24
-  refreshSecret: example-refresh-secret
-  refreshTTL: 168h
-```
+| Service  | Purpose          | Default Port |
+|----------|------------------|--------------|
+| MongoDB  | Document store   | 27017        |
+| Redis    | Cache            | 6379         |
+| NATS     | Message broker   | 4222         |
 
 ## Contribution Guidelines
 
 Contributions are welcome! Please open an issue before submitting a pull request so we can discuss the change. When contributing:
 
-1. Ensure `go vet ./...` and `go build ./cmd/api` run without errors.
-2. Format Go code with `gofmt`.
+1. Ensure `go vet ./...` and `go build` for the affected service run without errors.
+2. Format Go code with `gofmt` and Python code with `black` or `ruff` (future).
 3. Update or add tests where appropriate.
-4. Document any new features in `server/docs`.
+4. Document any new features in `README.md` or service-specific docs.
 
