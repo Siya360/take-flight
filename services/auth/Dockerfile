@@ -1,6 +1,7 @@
 mkgc9h-codex/review-codebase-for-agentic-ai-migration
 FROM golang:1.22-alpine AS build
 main
+
 WORKDIR /app
 COPY go.mod go.sum ./
 RUN go mod download
