@@ -1,14 +1,14 @@
-mkgc9h-codex/review-codebase-for-agentic-ai-migration
+# syntax=docker/dockerfile:1
+
 FROM golang:1.22-alpine AS build
-main
 WORKDIR /app
 COPY go.mod go.sum ./
 RUN go mod download
 COPY . .
-RUN go build -o auth ./cmd
+RUN go build -o bookings ./cmd
 
 FROM alpine:3.19
 WORKDIR /root/
-COPY --from=build /app/auth .
+COPY --from=build /app/bookings .
 EXPOSE 8080
-CMD ["./auth"]
+CMD ["./bookings"]
