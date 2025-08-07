@@ -8,10 +8,5 @@ Standalone microservice providing booking APIs for the Take Flight platform.
 go run ./cmd
 ```
 
-The service exposes a `GET /health` endpoint returning:
+The service exposes a `GET /health` endpoint returning `{ "status": "ok" }` for health checks.
 
-```json
-{"status": "ok"}
-```
-
-for health checks.
