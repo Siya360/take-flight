@@ -9,3 +9,4 @@ go run ./cmd
 ```
 
 The service exposes a `GET /health` endpoint returning `{ "status": "ok" }` for health checks.
+

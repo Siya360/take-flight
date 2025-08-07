@@ -7,6 +7,10 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
+type healthResponse struct {
+	Status string `json:"status"`
+}
+
 func main() {
 	e := echo.New()
 	e.GET("/health", func(c echo.Context) error {
