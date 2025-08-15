@@ -4,18 +4,17 @@ Take Flight is a full-stack, microservice-based flight management platform. The 
 
 ## Services
 
-| Service       | Language | Directory                 | Default Port |
-|---------------|----------|---------------------------|--------------|
+| Service              | Language | Directory             | Default Port |
+| -------------------- | -------- | --------------------- | ------------ |
 | **Backend Services** |
-| Auth          | Go       | `services/auth`           | 8081         |
-| Users         | Go       | `services/users`          | 8082         |
-| Flights       | Go       | `services/flights`        | 8083         |
-| Bookings      | Go       | `services/bookings`       | 8084         |
-| Admin         | Go       | `services/admin`          | 8085         |
-| Orchestrator  | Python   | `agents/orchestrator`     | 8090         |
-| **Frontend** |
-| Frontend      | React/TS | `frontend/`               | 3000         |
-
+| Auth                 | Go       | `services/auth`       | 8081         |
+| Users                | Go       | `services/users`      | 8082         |
+| Flights              | Go       | `services/flights`    | 8083         |
+| Bookings             | Go       | `services/bookings`   | 8084         |
+| Admin                | Go       | `services/admin`      | 8085         |
+| Orchestrator         | Python   | `agents/orchestrator` | 8090         |
+| **Frontend**         |
+| Frontend             | React/TS | `frontend/`           | 3000         |
 
 Each Go service exposes a `/health` endpoint using Echo. The orchestrator uses FastAPI to host LangChain agents.
 
@@ -85,18 +84,14 @@ docker compose up --build
 Service endpoints will be available on `localhost` using the ports listed above.
 
 ## Supporting Infrastructure
-main
 
 The compose file also starts supporting services for persistence, caching, and messaging:
 
-
-| Service  | Purpose          | Default Port |
-|----------|------------------|--------------|
-| MongoDB  | Document store   | 27017        |
-| Redis    | Cache            | 6379         |
-| NATS     | Message broker   | 4222         |
-
-main
+| Service | Purpose        | Default Port |
+| ------- | -------------- | ------------ |
+| MongoDB | Document store | 27017        |
+| Redis   | Cache          | 6379         |
+| NATS    | Message broker | 4222         |
 
 ## Contribution Guidelines
 
@@ -106,4 +101,3 @@ Contributions are welcome! Please open an issue before submitting a pull request
 2. Format Go code with `gofmt` and Python code with `black` or `ruff` (future).
 3. Update or add tests where appropriate.
 4. Document any new features in `README.md` or service-specific docs.
-
