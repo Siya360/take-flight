@@ -14,6 +14,9 @@ services:
     build: ./services/flights
     ports:
       - "8083:8080"
+    environment:
+      - AMADEUS_CLIENT_ID=${AMADEUS_CLIENT_ID}
+      - AMADEUS_CLIENT_SECRET=${AMADEUS_CLIENT_SECRET}
 
   bookings:
     build: ./services/bookings

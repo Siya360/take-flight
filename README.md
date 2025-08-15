@@ -72,6 +72,15 @@ yarn build
 
 The frontend uses environment variables to connect to backend services. Copy `frontend/.env.example` to `frontend/.env` and adjust URLs as needed for local development.
 
+### Amadeus API
+
+The flights service fetches live data from the Amadeus API. Obtain credentials from [Amadeus for Developers](https://developers.amadeus.com/) and set them in your environment:
+
+```bash
+export AMADEUS_CLIENT_ID=your_client_id
+export AMADEUS_CLIENT_SECRET=your_client_secret
+```
+
 ## Docker Compose
 
 The repository includes a `docker-compose.yml` that builds all services and supporting dependencies.
