@@ -7,7 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Switch } from "@/components/ui/switch";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { CalendarIcon, Search, MapPin, Users, ArrowRightLeft } from "lucide-react";
+import { CalendarIcon, Search, MapPin, Users, ArrowRightLeft, ChevronDown, ChevronUp, Edit } from "lucide-react";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 
@@ -24,9 +24,11 @@ interface SearchFormData {
 interface FlightSearchProps {
   onSearch: (searchData: SearchFormData) => void;
   isLoading?: boolean;
+  isCollapsed?: boolean;
+  onToggleCollapse?: () => void;
 }
 
-const FlightSearch = ({ onSearch, isLoading = false }: FlightSearchProps) => {
+const FlightSearch = ({ onSearch, isLoading = false, isCollapsed = false, onToggleCollapse }: FlightSearchProps) => {
   const [searchData, setSearchData] = useState<SearchFormData>({
     origin: "",
     destination: "",
@@ -50,9 +52,61 @@ const FlightSearch = ({ onSearch, isLoading = false }: FlightSearchProps) => {
     }));
   };
 
+  if (isCollapsed) {
+    // Collapsed view showing search summary
+    return (
+      <Card className="w-full shadow-card bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-200">
+        <CardContent className="p-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-4 text-sm text-muted-foreground">
+              <div className="flex items-center space-x-2">
+                <MapPin className="h-4 w-4" />
+                <span className="font-medium">{searchData.origin || "Origin"} → {searchData.destination || "Destination"}</span>
+              </div>
+              <div className="flex items-center space-x-2">
+                <CalendarIcon className="h-4 w-4" />
+                <span>{searchData.departureDate ? format(searchData.departureDate, "MMM dd") : "Departure"}</span>
+              </div>
+              <div className="flex items-center space-x-2">
+                <Users className="h-4 w-4" />
+                <span>{searchData.passengers} passenger{searchData.passengers > 1 ? 's' : ''}</span>
+              </div>
+            </div>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={onToggleCollapse}
+              className="flex items-center space-x-2 hover:bg-blue-100"
+            >
+              <Edit className="h-4 w-4" />
+              <span>Edit Search</span>
+              <ChevronDown className="h-4 w-4" />
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  // Expanded view with full form
   return (
     <Card className="w-full shadow-card">
       <CardContent className="p-6">
+        {onToggleCollapse && (
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-lg font-semibold">Search Flights</h2>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={onToggleCollapse}
+              className="flex items-center space-x-1"
+            >
+              <ChevronUp className="h-4 w-4" />
+              <span>Collapse</span>
+            </Button>
+          </div>
+        )}
+        
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Trip Type */}
           <div className="flex items-center space-x-2">

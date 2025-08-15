@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Plane, Clock, Users, Wifi, Utensils } from "lucide-react";
+import { formatCurrency } from "@/lib/currency";
 
 interface Flight {
   id: string;
@@ -35,12 +36,7 @@ const FlightCard = ({ flight, onSelect, onViewDetails }: FlightCardProps) => {
     });
   };
 
-  const formatPrice = (price: number, currency: string) => {
-    return new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: currency,
-    }).format(price);
-  };
+  // Remove the old formatPrice function - we'll use formatCurrency from lib
 
   const getAmenityIcon = (amenity: string) => {
     switch (amenity.toLowerCase()) {
@@ -123,7 +119,7 @@ const FlightCard = ({ flight, onSelect, onViewDetails }: FlightCardProps) => {
           </div>
           <div className="text-right">
             <p className="text-2xl font-bold text-foreground">
-              {formatPrice(flight.price, flight.currency)}
+              {formatCurrency(flight.price, flight.currency)}
             </p>
             <p className="text-sm text-muted-foreground">per person</p>
           </div>
