@@ -1,18 +1,20 @@
 # take-flight
 
-Take Flight is evolving into a microservice-based flight management platform. Each domain (authentication, users, flights,
-bookings, and admin) runs as an independent Go service while a Python orchestrator coordinates higher-level workflows for AI agents.
+Take Flight is a full-stack, microservice-based flight management platform. The system features a React frontend with Go microservices for each domain (authentication, users, flights, bookings, and admin), plus a Python orchestrator that coordinates higher-level workflows for AI agents.
 
 ## Services
 
 | Service       | Language | Directory                 | Default Port |
 |---------------|----------|---------------------------|--------------|
+| **Backend Services** |
 | Auth          | Go       | `services/auth`           | 8081         |
 | Users         | Go       | `services/users`          | 8082         |
 | Flights       | Go       | `services/flights`        | 8083         |
 | Bookings      | Go       | `services/bookings`       | 8084         |
 | Admin         | Go       | `services/admin`          | 8085         |
 | Orchestrator  | Python   | `agents/orchestrator`     | 8090         |
+| **Frontend** |
+| Frontend      | React/TS | `frontend/`               | 3000         |
 
 
 Each Go service exposes a `/health` endpoint using Echo. The orchestrator uses FastAPI to host LangChain agents.
@@ -21,6 +23,8 @@ Each Go service exposes a `/health` endpoint using Echo. The orchestrator uses F
 
 - Go 1.22+
 - Python 3.11+
+- Node.js 18+ (for frontend)
+- Bun or Yarn (frontend package managers)
 - Docker (optional for containerized workflow)
 
 ## Building Services
@@ -36,6 +40,38 @@ The Python orchestrator can be checked with:
 ```bash
 python -m py_compile agents/orchestrator/main.py
 ```
+
+### Frontend Development
+
+Install frontend dependencies:
+
+```bash
+cd frontend
+# Using bun (recommended)
+bun install
+# OR using yarn
+yarn install
+```
+
+Start the frontend development server:
+
+```bash
+# Using bun
+bun dev
+# OR using yarn
+yarn dev
+```
+
+Build the frontend for production:
+
+```bash
+# Using bun
+bun run build
+# OR using yarn
+yarn build
+```
+
+The frontend uses environment variables to connect to backend services. Copy `frontend/.env.example` to `frontend/.env` and adjust URLs as needed for local development.
 
 ## Docker Compose
 
