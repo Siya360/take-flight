@@ -9,6 +9,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Slider } from "@/components/ui/slider";
 import { Label } from "@/components/ui/label";
 import { Filter, SlidersHorizontal, Plane } from "lucide-react";
+import { convertFlightPrice, getUserCurrency } from "@/lib/currency";
+import { searchFlights, getFlightDetails, bookFlight, type FlightSearchRequest } from "@/lib/api";
 
 interface Flight {
   id: string;
@@ -42,6 +44,8 @@ const Flights = () => {
   const [filteredFlights, setFilteredFlights] = useState<Flight[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [showFilters, setShowFilters] = useState(false);
+  const [isSearchCollapsed, setIsSearchCollapsed] = useState(false);
+  const [hasSearched, setHasSearched] = useState(false);
   
   // Filter states
   const [priceRange, setPriceRange] = useState([0, 1000]);
@@ -108,12 +112,60 @@ const Flights = () => {
 
   const handleSearch = async (searchData: SearchFormData) => {
     setIsLoading(true);
-    // Simulate API call to /api/flights with search parameters
-    setTimeout(() => {
-      setFlights(mockFlights);
-      setFilteredFlights(mockFlights);
+    setHasSearched(true);
+    
+    try {
+      // Prepare API request
+      const searchRequest: FlightSearchRequest = {
+        origin: searchData.origin,
+        destination: searchData.destination,
+        departureDate: searchData.departureDate?.toISOString().split('T')[0] || '',
+        returnDate: searchData.returnDate?.toISOString().split('T')[0],
+        passengers: searchData.passengers,
+        class: searchData.class,
+        isRoundTrip: searchData.isRoundTrip,
+      };
+
+      // Try to call the real API first
+      let flightResults;
+      try {
+        flightResults = await searchFlights(searchRequest);
+        console.log('Real API response:', flightResults);
+      } catch (apiError) {
+        console.warn('API call failed, using mock data:', apiError);
+        // Fall back to mock data if API fails (e.g., no Amadeus credentials)
+        flightResults = mockFlights;
+      }
+
+      // Get user's preferred currency (ZAR for South African users, USD for others)
+      const userCurrency = getUserCurrency();
+      
+      // Convert flight prices to user's currency
+      const convertedFlights = (Array.isArray(flightResults) ? flightResults : mockFlights)
+        .map(flight => convertFlightPrice(flight, userCurrency));
+      
+      setFlights(convertedFlights);
+      setFilteredFlights(convertedFlights);
       setIsLoading(false);
-    }, 2000);
+      // Collapse the search after results are loaded
+      setIsSearchCollapsed(true);
+    } catch (error) {
+      console.error('Search failed:', error);
+      setIsLoading(false);
+      // Show error message to user
+      // For now, still show mock data as fallback
+      const userCurrency = getUserCurrency();
+      const convertedFlights = mockFlights.map(flight => 
+        convertFlightPrice(flight, userCurrency)
+      );
+      setFlights(convertedFlights);
+      setFilteredFlights(convertedFlights);
+      setIsSearchCollapsed(true);
+    }
+  };
+
+  const toggleSearchCollapse = () => {
+    setIsSearchCollapsed(!isSearchCollapsed);
   };
 
   const applyFilters = () => {
@@ -162,38 +214,58 @@ const Flights = () => {
 
   return (
     <Layout>
-      <div className="bg-gradient-sky text-white py-12">
-        <div className="container mx-auto px-4">
-          <h1 className="text-3xl font-bold mb-8 text-center">Find Your Perfect Flight</h1>
-          <div className="max-w-4xl mx-auto">
-            <FlightSearch onSearch={handleSearch} isLoading={isLoading} />
+      {/* Header with search - show full search initially, collapsed after search */}
+      {!hasSearched && (
+        <div className="bg-gradient-sky text-white py-12">
+          <div className="container mx-auto px-4">
+            <h1 className="text-3xl font-bold mb-8 text-center">Find Your Perfect Flight</h1>
+            <div className="max-w-4xl mx-auto">
+              <FlightSearch 
+                onSearch={handleSearch} 
+                isLoading={isLoading} 
+                isCollapsed={false}
+              />
+            </div>
           </div>
         </div>
-      </div>
+      )}
 
       <div className="container mx-auto px-4 py-8">
+        {/* Collapsed search bar when results are shown */}
+        {hasSearched && (
+          <div className="mb-6">
+            <FlightSearch 
+              onSearch={handleSearch} 
+              isLoading={isLoading} 
+              isCollapsed={isSearchCollapsed}
+              onToggleCollapse={toggleSearchCollapse}
+            />
+          </div>
+        )}
+
         <div className="flex flex-col lg:flex-row gap-8">
           {/* Filters Sidebar */}
-          <aside className="lg:w-80">
-            <Card className="sticky top-24">
-              <CardHeader>
-                <div className="flex items-center justify-between">
-                  <CardTitle className="flex items-center space-x-2">
-                    <Filter className="h-5 w-5" />
-                    <span>Filters</span>
-                  </CardTitle>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="lg:hidden"
-                    onClick={() => setShowFilters(!showFilters)}
-                  >
-                    <SlidersHorizontal className="h-4 w-4" />
-                  </Button>
-                </div>
-              </CardHeader>
-              
-              <CardContent className={`space-y-6 ${showFilters ? 'block' : 'hidden lg:block'}`}>
+          {hasSearched && (
+            <aside className="lg:w-80">
+              <Card className="sticky top-24">
+                <CardHeader>
+                  <div className="flex items-center justify-between">
+                    <CardTitle className="flex items-center space-x-2">
+                      <Filter className="h-5 w-5" />
+                      <span>Filters</span>
+                    </CardTitle>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="lg:hidden"
+                      onClick={() => setShowFilters(!showFilters)}
+                    >
+                      <SlidersHorizontal className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </CardHeader>
+                
+                <CardContent className={`space-y-6 ${showFilters ? 'block' : 'hidden lg:block'}`}>
                 {/* Sort */}
                 <div className="space-y-2">
                   <Label>Sort by</Label>
@@ -276,6 +348,7 @@ const Flights = () => {
               </CardContent>
             </Card>
           </aside>
+          )}
 
           {/* Results */}
           <main className="flex-1">
@@ -315,13 +388,35 @@ const Flights = () => {
                   <FlightCard
                     key={flight.id}
                     flight={flight}
-                    onSelect={(flight) => {
+                    onSelect={async (flight) => {
                       console.log("Selected flight:", flight);
-                      // Navigate to booking page
+                      try {
+                        // Call the booking API via orchestrator
+                        const bookingResult = await bookFlight({
+                          flightId: flight.id,
+                          passengers: 1, // TODO: Get from search data
+                        });
+                        console.log('Booking result:', bookingResult);
+                        // TODO: Navigate to booking confirmation page
+                        alert('Flight booking initiated! Check console for details.');
+                      } catch (error) {
+                        console.error('Booking failed:', error);
+                        alert('Booking failed. Please try again.');
+                      }
                     }}
-                    onViewDetails={(flight) => {
+                    onViewDetails={async (flight) => {
                       console.log("View details:", flight);
-                      // Open flight details modal
+                      try {
+                        // Call the flight details API
+                        const details = await getFlightDetails(flight.id);
+                        console.log('Flight details:', details);
+                        // TODO: Open flight details modal with real data
+                        alert('Flight details loaded! Check console for full details.');
+                      } catch (error) {
+                        console.error('Failed to get flight details:', error);
+                        // Fallback to showing basic flight info in alert
+                        alert(`Flight: ${flight.airline} ${flight.flightNumber}\n${flight.origin} → ${flight.destination}\nPrice: ${flight.currency} ${flight.price}`);
+                      }
                     }}
                   />
                 ))}
