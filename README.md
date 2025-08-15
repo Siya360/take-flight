@@ -1,99 +1,159 @@
 # Take-Flight Application
 
-This project is a flight booking application that demonstrates the use of React, Node.js, AWS Lambda, and WebSocket for real-time flight data updates.
+This project is a full-stack flight booking application with a React frontend (Vite + Tailwind + shadcn/ui) and Node.js backend, featuring real-time flight data updates through WebSocket connections.
+
+## Architecture
+
+- **Frontend**: React 18 + Vite + TypeScript + Tailwind CSS + shadcn/ui components (port 3000)
+- **Backend**: Node.js server with REST API and WebSocket support (port 8081)
+- **Database**: MongoDB (port 27017)
+- **Cache**: Redis (port 6379)
 
 ## Getting Started
 
 ### Prerequisites
 
-Before running the application, make sure you have the following installed:
-Node.js
-Yarn (or npm)
-
-### Clone the repository
-
-To clone the repository, run the following command:
-
-[git clone https://github.com/Siya360/take-flight.git](https://github.com/Siya360/take-flight.git)
+Make sure you have the following installed:
+- Node.js 18+
+- Yarn or Bun (package managers)
+- Docker & Docker Compose (for full-stack setup)
 
 ### Environment Setup
 
+#### Backend Server Setup
 Navigate to the `/server` directory:
-
+```bash
 cd server
-
-Copy the .env.example file to .env:
-
 cp .env.example .env
+```
+Open the .env file and fill in the actual configuration values.
 
-    Open the .env file and fill in the actual configuration values for your environment.
+#### Install Dependencies
 
-    Repeat steps 1-3 for the /client directory.
-
-Install Dependencies
-
-    Navigate to the /client directory and install the dependencies:
-
-cd client
-yarn install
-
-Navigate to the /server directory and install the dependencies:
-
+**Backend:**
+```bash
 cd server
 yarn install
+```
 
-Running the Application
-Client
+**Frontend:**
+```bash
+cd frontend
+# Using bun (recommended)
+bun install
+# OR using yarn
+yarn install
+```
 
-In the /client directory, you can run:
+## Running the Application
 
+### Frontend Only (Development)
+In the `/frontend` directory:
+```bash
+# Using bun
+bun dev
+# OR using yarn
+yarn dev
+```
+Open http://localhost:3000 to view the React application.
+
+### Backend Only (Development)
+In the `/server` directory:
+```bash
 yarn start
+```
+The Node.js server will start on http://localhost:8081.
 
-    This runs the app in development mode.
-    Open http://localhost:4000 to view it in your browser.
-    The page will reload with edits. Lint errors will be shown in the console.
+### Full Stack with Docker
+Run the entire application stack with Docker:
+```bash
+docker compose up --build
+```
+This starts:
+- Frontend: http://localhost:3000
+- Backend API: http://localhost:8081
+- MongoDB: localhost:27017
+- Redis: localhost:6379
 
-Server
+### Service Ports Reference
 
-In the /server directory, you can run:
+| Service    | Port | Description |
+|------------|------|-------------|
+| Frontend   | 3000 | React + Vite dev server / built app |
+| Backend    | 8081 | Node.js API server |
+| MongoDB    | 27017 | Database |
+| Redis      | 6379 | Cache and sessions |
 
-yarn start
+## Testing
 
-    This starts the Node.js server.
-    Ensure the server is running for the client to communicate with the backend services.
-
-Running Tests
-
-To launch the test runner in interactive watch mode, run:
-
+### Frontend Tests
+In the `/frontend` directory:
+```bash
+# Using bun
+bun test
+# OR using yarn
 yarn test
+```
 
+### Backend Tests
+In the `/server` directory:
+```bash
 yarn test
+```
 
-Building for Production
+## Building for Production
 
-To build the app for production, run:
-
+### Frontend Build
+In the `/frontend` directory:
+```bash
+# Using bun
+bun run build
+# OR using yarn
 yarn build
+```
+This creates an optimized production build in the `dist/` folder.
 
-    This builds the app to the build folder.
-    It correctly bundles React in production mode and optimizes the build for performance.
+### Backend Build
+The backend runs directly from source. For production deployment, ensure environment variables are properly configured.
 
-Learn More
+## Project Structure
 
-To learn more about React, check out the React documentation.
-Project Structure
+```
+├── frontend/           # React + Vite + TypeScript frontend
+│   ├── src/
+│   │   ├── components/  # Reusable UI components (shadcn/ui)
+│   │   ├── pages/       # Application pages/routes
+│   │   ├── lib/         # Utilities and configurations
+│   │   └── hooks/       # Custom React hooks
+│   ├── public/          # Static assets
+│   └── package.json     # Frontend dependencies
+├── server/             # Node.js backend server
+│   ├── lambda_functions/ # Serverless functions
+│   ├── microservices/   # Service modules
+│   └── package.json     # Backend dependencies
+└── docker-compose.yml   # Full-stack orchestration
+```
 
-    src/components: Contains React components for the application.
-    src/pages: Includes different pages for the application, such as FlightList, NewFlight, and FlightDetails.
-    src/styles: Contains styled components and Material-UI customizations.
-    src/utils: Utility functions and API service handlers.
+## Development Workflow
 
-Contributing
+1. **Local Development** (recommended for rapid iteration):
+   - Start backend: `cd server && yarn start`
+   - Start frontend: `cd frontend && bun dev`
+   - Access app at http://localhost:3000
 
-Contributions are welcome. Please open an issue or submit a pull request with any improvements.
-License
+2. **Docker Development** (for testing full integration):
+   - Run: `docker compose up --build`
+   - Access app at http://localhost:3000
+
+## Contributing
+
+Contributions are welcome! Please:
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Add tests for new functionality
+5. Submit a pull request
+
+## License
 
 This project is licensed under the MIT License - see the LICENSE file for details.
-
-Make sure to replace `<repository-url>` with the actual URL of your repository. This updated README.md provides a comprehensive overview of the project, including environment setup instructions, particularly the handling of `.env` files, and a structured guide for running and building the application.
